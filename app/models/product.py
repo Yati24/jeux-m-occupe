@@ -15,6 +15,7 @@ class Product(db.Model):
     status = db.Column(db.String(50), default='available', index=True)
     number_of_players = db.Column(db.String(100))
     playing_time = db.Column(db.String(100))
+    min_age = db.Column(db.Integer)
     year = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -34,6 +35,7 @@ class Product(db.Model):
             'status': self.status,
             'number_of_players': self.number_of_players,
             'playing_time': self.playing_time,
+            'min_age': self.min_age,
             'year': self.year,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
