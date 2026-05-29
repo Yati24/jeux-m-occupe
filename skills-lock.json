@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "flask-api-development": {
+      "source": "aj-geddes/useful-ai-prompts",
+      "sourceType": "github",
+      "skillPath": "skills/flask-api-development/SKILL.md",
+      "computedHash": "cae3a73820685f8c41e224723f96740913535e830cd05ee7a08445e8face39d6"
+    },
+    "tailwind-design-system": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/frontend-mobile-development/skills/tailwind-design-system/SKILL.md",
+      "computedHash": "cd61afd28f594e8b6712b61749209cbb4466e3eec4e4223793bbd97fc85c1b63"
+    }
+  }
+}

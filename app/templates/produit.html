@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Produit - Jeux m'occupe{% endblock %}
+
+{% block content %}
+<div class="header-container py-6">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
+        <a href="/" class="hover:text-orange-500">Accueil</a>
+        <span>/</span>
+        <a href="/acheter" class="hover:text-orange-500">Catalogue</a>
+        <span>/</span>
+        <span id="breadcrumb-title" class="text-gray-900 font-medium"></span>
+    </nav>
+
+    <!-- Back button -->
+    <button onclick="history.back()" class="flex items-center gap-2 text-gray-600 hover:text-orange-500 mb-6">
+        <span>←</span>
+        <span>Retour</span>
+    </button>
+</div>
+
+<!-- Main Product Section -->
+<div class="header-container mb-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <!-- Product Images -->
+        <div>
+            <!-- Main Image -->
+            <div class="bg-gray-100 rounded-xl aspect-square overflow-hidden mb-4 relative">
+                <img id="product-image-main" src="" alt="" class="w-full h-full object-cover">
+                <!-- Badge -->
+                <div id="product-badge" class="absolute top-4 left-4 badge-orange hidden"></div>
+            </div>
+            <!-- Thumbnails -->
+            <div id="product-thumbnails" class="flex gap-2">
+                <div class="w-16 h-16 bg-gray-200 rounded-lg border-2 border-gray-300 cursor-pointer overflow-hidden">
+                    <img id="product-image-main" src="" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="w-16 h-16 bg-gray-200 rounded-lg cursor-pointer overflow-hidden">
+                    <img src="" alt="" class="w-full h-full object-cover opacity-60">
+                </div>
+                <div class="w-16 h-16 bg-gray-200 rounded-lg cursor-pointer overflow-hidden">
+                    <img src="" alt="" class="w-full h-full object-cover opacity-60">
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div>
+            <!-- Title & Rating -->
+            <div class="mb-6">
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase tracking-wide" id="product-publisher"></p>
+                        <h1 id="product-title" class="text-3xl md:text-4xl font-bold"></h1>
+                    </div>
+                </div>
+
+                <!-- Rating -->
+                <div class="flex items-center gap-3">
+                    <div class="rating">
+                        <span class="star">★★★★★</span>
+                    </div>
+                    <span id="product-rating" class="text-sm text-gray-600"></span>
+                </div>
+            </div>
+
+            <!-- Price Section -->
+            <div class="card-lg bg-orange-50 border-orange-100 mb-6">
+                <div class="flex items-baseline gap-3 mb-2">
+                    <span id="product-price" class="text-3xl font-bold text-gray-900">22 €</span>
+                    <span id="product-original-price" class="text-lg text-gray-400 line-through">55 €</span>
+                    <span id="product-discount" class="badge-orange">-60% économisé</span>
+                </div>
+            </div>
+
+            <!-- Expert Opinion -->
+            <div class="card mb-6 border-l-4 border-orange-500">
+                <div class="flex items-start gap-3">
+                    <div class="text-2xl">🎯</div>
+                    <div>
+                        <h3 class="font-bold text-sm mb-2">L'avis de l'expert</h3>
+                        <p id="product-expert-opinion" class="text-sm text-gray-700">Jeu idéal pour commencer dans l'univers des stratégies. Équilibré et accessible à tous.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details Icons -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="text-center">
+                    <div class="text-2xl mb-2">👥</div>
+                    <p class="text-xs text-gray-600">Joueurs</p>
+                    <p id="product-players" class="font-bold text-sm">3 - 4</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl mb-2">⏱️</div>
+                    <p class="text-xs text-gray-600">Durée</p>
+                    <p id="product-time" class="font-bold text-sm">60 - 120 min</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl mb-2">🎂</div>
+                    <p class="text-xs text-gray-600">Âge min</p>
+                    <p id="product-age" class="font-bold text-sm">10 ans+</p>
+                </div>
+            </div>
+
+            <!-- Category Tags -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="badge-orange">Stratégie</span>
+                <span class="badge bg-blue-100 text-blue-700">En famille</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3 mb-6">
+                <button onclick="addToCart()" class="btn-primary w-full py-3 text-lg flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 8m10-8l2 8M9 21h6a1 1 0 001-1v-1H8v1a1 1 0 001 1z"/>
+                    </svg>
+                    Ajouter au panier
+                </button>
+                <button class="btn-secondary w-full py-3">Acheter maintenant →</button>
+            </div>
+
+            <!-- Trust Signals -->
+            <div class="space-y-2 text-sm">
+                <div class="trust-item">
+                    <svg class="trust-item-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <span>Contenu 100% vérifié</span>
+                </div>
+                <div class="trust-item">
+                    <svg class="trust-item-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <span>Retour 90 jours</span>
+                </div>
+                <div class="trust-item">
+                    <svg class="trust-item-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <span>Expédition sous 48h</span>
+                </div>
+                <div class="trust-item">
+                    <svg class="trust-item-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <span>Paiement sécurisé</span>
+                </div>
+            </div>
+
+            <!-- Have This Game -->
+            <div class="card mt-6 bg-orange-50 border-orange-100">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl">🎲</span>
+                    <div>
+                        <p class="font-bold">Vous avez ce jeu ?</p>
+                        <p class="text-sm text-gray-600">On vous le rachète 👉 en bon d'achat ou virement. <a href="#" class="text-orange-500 font-medium">Estimer →</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Description Section -->
+<section class="bg-gray-50 py-12 mb-12">
+    <div class="header-container">
+        <h2 class="text-2xl font-bold mb-6">Description du jeu</h2>
+        <p id="product-description" class="text-gray-700 leading-relaxed max-w-3xl"></p>
+    </div>
+</section>
+
+<!-- Related Products -->
+<section class="header-container mb-12">
+    <h2 class="text-2xl font-bold mb-8">Vous aimerez aussi</h2>
+    <div id="related-products" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Loaded by JS -->
+    </div>
+</section>
+
+<!-- Reviews Section -->
+<section class="header-container pb-12">
+    <h2 class="text-2xl font-bold mb-8">Avis des clients</h2>
+    <div id="reviews-list" class="space-y-4">
+        <!-- Loaded by JS -->
+    </div>
+</section>
+
+<script>
+    const productId = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop();
+
+    async function loadProduct() {
+        const response = await fetch(`/api/products/${productId}`);
+        const product = await response.json();
+
+        document.getElementById('product-title').textContent = product.title;
+        document.getElementById('breadcrumb-title').textContent = product.title;
+        document.getElementById('product-image-main').src = product.image_url || '/static/placeholder.svg';
+        document.getElementById('product-publisher').textContent = product.publisher || 'Publisher';
+        document.getElementById('product-players').textContent = product.number_of_players || '-';
+        document.getElementById('product-time').textContent = product.playing_time || '-';
+        document.getElementById('product-age').textContent = product.min_age ? product.min_age + ' ans+' : '-';
+        document.getElementById('product-price').textContent = `${product.price.toFixed(2)}€`;
+        document.getElementById('product-rating').textContent = `${product.rating || 5} ⭐ (${product.review_count || 0} avis vérifiés)`;
+        document.getElementById('product-description').textContent = product.description;
+
+        // Original price calculation (assumed to be ~2.5x the current price)
+        const originalPrice = (product.price * 2.5).toFixed(2);
+        document.getElementById('product-original-price').textContent = `${originalPrice}€`;
+
+        // Discount calculation
+        const discount = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+        document.getElementById('product-discount').textContent = `-${discount}% économisé`;
+
+        // Load reviews
+        const reviewsResponse = await fetch(`/api/products/${productId}/reviews`);
+        const reviewsData = await reviewsResponse.json();
+        document.getElementById('reviews-list').innerHTML = reviewsData.reviews.map(review => `
+            <div class="card">
+                <div class="flex items-start gap-3 mb-2">
+                    <img src="${review.reviewer.avatar || '/static/placeholder.svg'}" alt="" class="w-10 h-10 rounded-full">
+                    <div class="flex-1">
+                        <p class="font-semibold">${review.reviewer.username}</p>
+                        <p class="text-sm text-yellow-500">★ ${review.rating}/5</p>
+                    </div>
+                </div>
+                <h4 class="font-semibold">${review.title}</h4>
+                <p class="text-sm text-gray-600">${review.comment}</p>
+            </div>
+        `).join('');
+
+        if (reviewsData.reviews.length === 0) {
+            document.getElementById('reviews-list').innerHTML = '<p class="text-gray-600">Aucun avis pour le moment</p>';
+        }
+
+        // Load related products
+        const relatedResponse = await fetch(`/api/products?per_page=3&exclude=${productId}`);
+        const relatedData = await relatedResponse.json();
+        document.getElementById('related-products').innerHTML = relatedData.products.slice(0, 3).map(p => `
+            <a href="/produit/${p.id}" class="card hover:shadow-md transition">
+                <div class="aspect-square bg-gray-200 rounded-lg mb-3 overflow-hidden">
+                    <img src="${p.image_url || '/static/placeholder.svg'}" alt="${p.title}" class="w-full h-full object-cover">
+                </div>
+                <p class="text-xs text-gray-500 uppercase">${p.publisher || 'Publisher'}</p>
+                <h3 class="font-semibold text-sm line-clamp-2 mb-2">${p.title}</h3>
+                <p class="text-orange-600 font-bold">${p.price.toFixed(2)}€</p>
+                <button onclick="event.preventDefault(); addToCartProduct(${p.id})" class="mt-3 btn-primary-sm w-full">Ajouter</button>
+            </a>
+        `).join('');
+    }
+
+    function addToCart() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        fetch('/api/cart/items', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ product_id: productId, quantity: 1 })
+        }).then(r => r.json()).then(() => {
+            alert('Ajouté au panier!');
+        });
+    }
+
+    function addToCartProduct(pId) {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        fetch('/api/cart/items', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ product_id: pId, quantity: 1 })
+        }).then(r => r.json()).then(() => {
+            alert('Ajouté au panier!');
+        });
+    }
+
+    loadProduct();
+</script>
+{% endblock %}
+

@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 active:scale-95 transition font-medium;
+  }
+
+  .btn-primary-sm {
+    @apply inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 active:scale-95 transition font-medium text-sm;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg hover:bg-gray-50 active:scale-95 transition font-medium;
+  }
+
+  .btn-secondary-sm {
+    @apply inline-flex items-center justify-center px-4 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-md hover:bg-gray-50 active:scale-95 transition font-medium text-sm;
+  }
+
+  .btn-tertiary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-transparent text-orange-500 border-2 border-orange-500 rounded-lg hover:bg-orange-50 active:scale-95 transition font-medium;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-lg shadow-sm p-4 border border-gray-100 transition hover:shadow-md;
+  }
+
+  .card-lg {
+    @apply bg-white rounded-lg shadow-md p-6 border border-gray-100;
+  }
+
+  .card-dark {
+    @apply bg-gray-900 text-white rounded-lg shadow-sm p-4 border border-gray-800;
+  }
+
+  /* Inputs & Forms */
+  .input {
+    @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition bg-white;
+  }
+
+  .home-trust-section {
+    @apply bg-gray-100;
+  }
+
+  .input:disabled {
+    @apply bg-gray-50 cursor-not-allowed opacity-75;
+  }
+
+  /* Layout */
+  .header-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-md {
+    @apply max-w-3xl mx-auto;
+  }
+
+  .container-sm {
+    @apply max-w-2xl mx-auto;
+  }
+
+  /* Section Headings */
+  .section-heading {
+    @apply text-3xl md:text-4xl font-bold mb-2;
+  }
+
+  .section-subheading {
+    @apply text-gray-600 text-lg mb-8;
+  }
+
+  /* Grid responsive */
+  .grid-products {
+    @apply grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+  }
+
+  .grid-categories {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-4;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    @apply relative py-12 md:py-20 overflow-hidden;
+  }
+
+  .hero-dark {
+    @apply bg-neutral-950 text-white;
+  }
+
+  .footer-dark {
+    @apply bg-neutral-950 text-white;
+  }
+
+  .hero-light {
+    @apply bg-orange-50 text-gray-900;
+  }
+}
+
+@layer utilities {
+  /* Badge styles */
+  .badge {
+    @apply inline-block px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-orange {
+    @apply bg-orange-100 text-orange-700;
+  }
+
+  .badge-green {
+    @apply bg-green-100 text-green-700;
+  }
+
+  .badge-dark {
+    @apply bg-gray-900 text-white;
+  }
+
+  /* Product Cards */
+  .product-card {
+    @apply bg-white rounded-lg shadow-sm p-4 border border-gray-100 transition hover:shadow-lg hover:border-orange-500 overflow-hidden;
+  }
+
+  .home-product-card {
+    @apply block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .home-product-media {
+    @apply relative aspect-[4/3] overflow-hidden;
+  }
+
+  .home-product-image {
+    @apply w-full h-full object-cover transition duration-300 group-hover:scale-105;
+  }
+
+  .home-product-badge {
+    @apply absolute top-3 z-10 px-2.5 py-1 rounded-full text-[11px] font-bold leading-none shadow-sm;
+  }
+
+  .home-product-badge-discount {
+    @apply left-3 bg-orange-500 text-white;
+  }
+
+  .home-product-badge-condition {
+    @apply right-3 bg-green-600 text-white;
+  }
+
+  .home-product-content {
+    @apply p-4;
+  }
+
+  .home-product-publisher {
+    @apply text-xs uppercase tracking-wide text-gray-400 font-medium mb-1;
+  }
+
+  .home-product-title {
+    @apply font-bold text-gray-900 text-sm leading-snug mb-2;
+  }
+
+  .home-product-meta {
+    @apply flex items-center justify-between gap-3 text-xs text-gray-500 font-medium;
+  }
+
+  .home-product-pricing {
+    @apply flex items-end justify-between gap-3 mt-3;
+  }
+
+  .home-product-price-row {
+    @apply flex items-baseline gap-2 min-w-0;
+  }
+
+  .home-product-price {
+    @apply text-lg font-bold text-gray-900 whitespace-nowrap;
+  }
+
+  .home-product-old-price {
+    @apply text-xs text-gray-400 line-through whitespace-nowrap;
+  }
+
+  .home-product-add {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-full bg-orange-500 text-white text-sm font-semibold whitespace-nowrap transition hover:bg-orange-600 active:scale-95;
+  }
+
+  .product-image {
+    @apply aspect-square bg-gray-200 rounded-md mb-3 overflow-hidden;
+  }
+
+  .product-image img {
+    @apply w-full h-full object-cover group-hover:scale-105 transition;
+  }
+
+  /* Trust Items */
+  .trust-item {
+    @apply flex flex-col items-center text-center gap-4;
+  }
+
+  .home-trust-card {
+    @apply rounded-2xl bg-white border border-gray-100 shadow-sm p-6 flex items-start gap-4;
+  }
+
+  .trust-item-icon {
+    @apply w-12 h-12 flex items-center justify-center text-2xl bg-orange-100 rounded-full;
+  }
+
+  .trust-item-title {
+    @apply font-semibold text-gray-900;
+  }
+
+  .trust-item-desc {
+    @apply text-sm text-gray-600;
+  }
+
+  /* Rating */
+  .rating {
+    @apply flex items-center gap-1;
+  }
+
+  .star {
+    @apply text-yellow-400;
+  }
+}

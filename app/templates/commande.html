@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Commande - Jeux m'occupe{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold mb-8">Passer une commande</h1>
+
+    <form id="checkout-form" class="space-y-6">
+        <div class="card">
+            <h2 class="text-xl font-bold mb-4">Adresse de livraison</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Adresse *</label>
+                    <input type="text" name="shipping_address" class="input" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Ville *</label>
+                        <input type="text" name="shipping_city" class="input" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Code postal *</label>
+                        <input type="text" name="shipping_postal_code" class="input" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="text-xl font-bold mb-4">Résumé de la commande</h2>
+            <div id="order-summary" class="space-y-2 text-sm mb-4">
+                <!-- Loaded by JS -->
+            </div>
+            <div class="border-t border-gray-200 pt-4">
+                <div class="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span id="total-price">0€</span>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary w-full py-3 text-lg">Confirmer la commande</button>
+    </form>
+</div>
+
+<script>
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+        window.location.href = '/login';
+    }
+
+    async function loadCart() {
+        const response = await fetch('/api/cart', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        const summary = document.getElementById('order-summary');
+        summary.innerHTML = data.items.map(item => `
+            <div class="flex justify-between">
+                <span>${item.product.title}</span>
+                <span>${item.subtotal.toFixed(2)}€</span>
+            </div>
+        `).join('');
+
+        document.getElementById('total-price').textContent = data.total_price.toFixed(2) + '€';
+    }
+
+    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                shipping_address: formData.get('shipping_address'),
+                shipping_city: formData.get('shipping_city'),
+                shipping_postal_code: formData.get('shipping_postal_code')
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert('Commande confirmée!');
+            window.location.href = '/compte';
+        } else {
+            alert('Erreur lors de la commande');
+        }
+    });
+
+    loadCart();
+</script>
+{% endblock %}

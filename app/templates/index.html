@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - Jeux m'occupe{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section hero-dark relative">
+    <div class="header-container grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+        <div class="flex flex-col justify-center">
+            <div class="inline-flex items-center gap-2 mb-6">
+                <span class="inline-block px-3 py-1.5 bg-orange-500 text-white text-xs font-bold rounded-full">
+                    ♻️ Éco-responsable
+                </span>
+            </div>
+
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Donnez une<br/><span class="text-orange-500">seconde vie</span><br/>à vos soirées
+            </h1>
+
+            <p class="text-lg text-gray-300 mb-8 max-w-lg">
+                Des jeux de société d'occasion 100% complets et vérifiés, à petits prix. Achetez, vendez, jouez !
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                <a href="/acheter" class="btn-primary">Voir les annonces</a>
+                <a href="/vendre" class="btn-secondary">Vendre mes jeux</a>
+            </div>
+
+            <div class="flex items-center gap-4 text-sm text-gray-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">⭐⭐⭐⭐⭐</span>
+                    <span>4.8/5 basé sur 2,847 avis</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Image Placeholder -->
+        <div class="hidden md:block relative">
+            <div class="aspect-square bg-gradient-to-br from-orange-600 to-orange-800 rounded-2xl overflow-hidden shadow-2xl">
+                <div class="w-full h-full flex items-center justify-center text-6xl">
+                    🎲
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trust Signals -->
+<section class="home-trust-section py-12 border-b border-gray-200">
+    <div class="header-container">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="home-trust-card">
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-orange-50 text-orange-500 text-xl shrink-0">✓</div>
+                <div>
+                    <p class="trust-item-title mb-1">100% complets & vérifiés</p>
+                    <p class="trust-item-desc">Chaque jeu contrôlé par nos experts</p>
+                </div>
+            </div>
+            <div class="home-trust-card">
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-green-50 text-green-600 text-xl shrink-0">♻</div>
+                <div>
+                    <p class="trust-item-title mb-1">Éco-responsable</p>
+                    <p class="trust-item-desc">Donnez une seconde vie à vos jeux</p>
+                </div>
+            </div>
+            <div class="home-trust-card">
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 text-xl shrink-0">⚡</div>
+                <div>
+                    <p class="trust-item-title mb-1">Livraison rapide 48h</p>
+                    <p class="trust-item-desc">Expédition sécurisée partout en France</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories -->
+<section class="bg-white py-12 border-b border-gray-200">
+    <div class="header-container">
+        <p class="text-orange-500 text-xs font-bold uppercase tracking-[0.25em] mb-2">Parcourir</p>
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="section-heading">Nos catégories</h2>
+            <a href="/acheter" class="text-orange-500 hover:text-orange-600 font-semibold flex items-center gap-2 transition">
+                Voir tout →
+            </a>
+        </div>
+
+        <div class="grid-categories">
+            <a href="/acheter?category=Pour+petits" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
+                    <div>
+                        <p class="text-2xl mb-1">👶</p>
+                        <p class="font-semibold text-sm">Pour les petits<br/><span class="block mt-1 text-xs font-light text-gray-300">3 - 6 ans</span></p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/acheter?category=En+famille" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
+                    <div>
+                        <p class="text-2xl mb-1">👨‍👩‍👧‍👦</p>
+                        <p class="font-semibold text-sm">En famille<br/><span class="block mt-1 text-xs font-light text-gray-300">Pour tous</span></p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/acheter?category=Jeux+Experts" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
+                    <div>
+                        <p class="text-2xl mb-1">🧠</p>
+                        <p class="font-semibold text-sm">Jeux expertes<br/><span class="block mt-1 text-xs font-light text-gray-300">Stratégie avancée</span></p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/acheter?category=Jeux+strategie" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
+                    <div>
+                        <p class="text-2xl mb-1">🎯</p>
+                        <p class="font-semibold text-sm">Bons plans<br/><span class="block mt-1 text-xs font-light text-gray-300">Jusqu'à -70%</span></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Arrivals -->
+<section class="header-container py-12">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <p class="text-orange-500 text-xs font-bold uppercase tracking-[0.25em] mb-2">Fraîchement arrivés</p>
+            <h2 class="section-heading">Derniers arrivages</h2>
+        </div>
+        <a href="/acheter" class="text-orange-500 hover:text-orange-600 font-semibold flex items-center gap-2 transition">
+            Voir tout →
+        </a>
+    </div>
+
+    <div id="featured-products" class="grid-products mb-8">
+        <!-- Loaded by JS -->
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-orange-500 text-white py-16">
+    <div class="header-container text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Vous avez des jeux qui traînent ?</h2>
+        <p class="text-lg mb-8 text-orange-50">Vendez-les sur Jeux m'occupe et donnez-leur une seconde vie</p>
+        <a href="/vendre" class="inline-flex items-center justify-center px-8 py-3 bg-white text-orange-500 font-semibold rounded-lg hover:bg-gray-100 transition">
+            Commencer à vendre
+        </a>
+    </div>
+</section>
+
+<script>
+    // Load featured products
+    fetch('/api/products?per_page=8')
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('featured-products');
+            container.innerHTML = data.products.map(product => {
+                const price = Number(product.price || 0);
+                const newPrice = price * 2.5;
+                const discount = newPrice > 0 ? Math.round(((newPrice - price) / newPrice) * 100) : 0;
+                const condition = product.condition || 'Bon état';
+
+                return `
+                <a href="/produit/${product.id}" class="home-product-card group">
+                    <div class="home-product-media">
+                        <span class="home-product-badge home-product-badge-discount">-${discount}%</span>
+                        <span class="home-product-badge home-product-badge-condition">${condition}</span>
+                        <img src="${product.image_url || '/static/placeholder.svg'}" alt="${product.title}" class="home-product-image" />
+                    </div>
+                    <div class="home-product-content">
+                        <p class="home-product-publisher">${product.publisher || 'Éditeur'}</p>
+                        <h3 class="home-product-title">${product.title}</h3>
+                        <div class="home-product-meta">
+                            <span>${product.number_of_players || '-'} joueurs</span>
+                            <span>${product.min_age ? `${product.min_age}+ ans` : 'Âge non précisé'}</span>
+                        </div>
+                        <div class="home-product-pricing">
+                            <div class="home-product-price-row">
+                                <span class="home-product-price">${price.toFixed(2)}€</span>
+                                <span class="home-product-old-price">${newPrice.toFixed(2)}€</span>
+                            </div>
+                            <span class="home-product-add">Ajouter</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+            }).join('');
+        });
+
+    // Search functionality
+    const searchInputs = [document.getElementById('search-input'), document.getElementById('search-input-mobile')];
+    searchInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    window.location.href = `/acheter?search=${encodeURIComponent(e.target.value)}`;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+

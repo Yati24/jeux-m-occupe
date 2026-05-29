@@ -1,0 +1,17 @@
+{
+  "name": "jeux-m-occupe",
+  "version": "1.0.0",
+  "description": "Platform for buying and selling used board games",
+  "scripts": {
+    "dev": "npm run tailwind:watch & python3 run.py",
+    "build": "npm run tailwind:build",
+    "tailwind:watch": "tailwindcss -i ./app/static/input.css -o ./app/static/styles.css --watch",
+    "tailwind:build": "tailwindcss -i ./app/static/input.css -o ./app/static/styles.css --minify"
+  },
+  "keywords": ["boardgames", "ecommerce"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^4.0.0"
+  }
+}

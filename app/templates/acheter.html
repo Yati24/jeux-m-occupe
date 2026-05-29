@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Acheter - Jeux m'occupe{% endblock %}
+
+{% block content %}
+<div class="header-container py-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="section-heading mb-2">Tous les jeux</h1>
+        <p class="text-gray-600">Parcourez notre sélection de jeux d'occasion vérifiés</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 bg-gray-50 p-6 rounded-lg">
+        <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-900">Catégorie</label>
+            <select id="category-filter" class="input text-sm">
+                <option value="">Toutes les catégories</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-900">Prix min</label>
+            <input type="number" id="min-price" class="input text-sm" placeholder="0">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-900">Prix max</label>
+            <input type="number" id="max-price" class="input text-sm" placeholder="1000">
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-900">Trier par</label>
+            <select id="sort-filter" class="input text-sm">
+                <option value="created_at">Les plus récents</option>
+                <option value="price">Prix (bas au haut)</option>
+                <option value="price-desc">Prix (haut au bas)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="products-container" class="grid-products mb-12">
+        <!-- Loaded by JS -->
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="flex justify-center gap-2 mb-8">
+        <!-- Loaded by JS -->
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+
+    async function loadProducts() {
+        const category = document.getElementById('category-filter').value;
+        const minPrice = document.getElementById('min-price').value;
+        const maxPrice = document.getElementById('max-price').value;
+        const sort = document.getElementById('sort-filter').value;
+
+        let url = `/api/products?page=${currentPage}&per_page=12`;
+        if (category) url += `&category=${category}`;
+        if (minPrice) url += `&min_price=${minPrice}`;
+        if (maxPrice) url += `&max_price=${maxPrice}`;
+        if (sort.includes('price')) {
+            url += `&sort=price&order=${sort.includes('desc') ? 'desc' : 'asc'}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const container = document.getElementById('products-container');
+        container.innerHTML = data.products.map(product => `
+            <a href="/produit/${product.id}" class="product-card">
+                <div class="product-image">
+                    <img src="${product.image_url || '/static/placeholder.svg'}" alt="${product.title}" />
+                </div>
+                <div class="relative pb-2">
+                    ${product.condition ? `<span class="badge badge-orange text-xs">${product.condition}</span>` : ''}
+                </div>
+                <h3 class="font-semibold text-sm line-clamp-2 mb-2">${product.title}</h3>
+                <p class="text-xs text-gray-500 mb-2">${product.condition || 'État non spécifié'}</p>
+                <p class="text-orange-600 font-bold text-lg">${parseFloat(product.price).toFixed(2)}€</p>
+            </a>
+        `).join('');
+
+        // Pagination
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+        for (let i = 1; i <= data.pages; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i;
+            btn.className = i === currentPage
+                ? 'px-4 py-2 bg-orange-500 text-white rounded-lg font-semibold transition'
+                : 'px-4 py-2 border border-gray-300 rounded-lg hover:border-orange-500 transition';
+            btn.onclick = () => {
+                currentPage = i;
+                loadProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+            pagination.appendChild(btn);
+        }
+    }
+
+    async function loadCategories() {
+        const response = await fetch('/api/products/categories');
+        const data = await response.json();
+        const select = document.getElementById('category-filter');
+        data.categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            select.appendChild(option);
+        });
+    }
+
+    document.getElementById('category-filter').addEventListener('change', () => {
+        currentPage = 1;
+        loadProducts();
+    });
+    document.getElementById('min-price').addEventListener('change', () => {
+        currentPage = 1;
+        loadProducts();
+    });
+    document.getElementById('max-price').addEventListener('change', () => {
+        currentPage = 1;
+        loadProducts();
+    });
+    document.getElementById('sort-filter').addEventListener('change', () => {
+        currentPage = 1;
+        loadProducts();
+    });
+
+    loadCategories();
+    loadProducts();
+</script>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Compte - Jeux m'occupe{% endblock %}
+
+{% block content %}
+<div class="header-container py-8">
+    <!-- Not Logged In State -->
+    <div id="not-logged" class="bg-gradient-to-br from-orange-50 to-white rounded-xl shadow-sm p-12 text-center max-w-md mx-auto">
+        <div class="text-6xl mb-4">👤</div>
+        <h1 class="section-heading mb-2">Connectez-vous</h1>
+        <p class="text-gray-600 mb-8">Pour accéder à votre profil, vos annonces et vos commandes</p>
+        <a href="/login" class="btn-primary">Se connecter</a>
+    </div>
+
+    <!-- Logged In State -->
+    <div id="logged" class="hidden">
+        <!-- Tabs -->
+        <div class="flex overflow-x-auto gap-4 mb-8 border-b border-gray-200 pb-0">
+            <button class="tab-btn active py-4 px-2 border-b-2 border-orange-500 text-orange-500 font-semibold transition whitespace-nowrap" data-tab="profile">
+                Mon profil
+            </button>
+            <button class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900 font-semibold transition whitespace-nowrap" data-tab="products">
+                Mes annonces
+            </button>
+            <button class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900 font-semibold transition whitespace-nowrap" data-tab="purchases">
+                Mes achats
+            </button>
+            <button class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900 font-semibold transition whitespace-nowrap" data-tab="sales">
+                Mes ventes
+            </button>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content">
+            <div class="container-sm">
+                <h2 class="text-2xl font-bold mb-6">Informations personnelles</h2>
+                <form id="profile-form" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Prénom</label>
+                            <input type="text" name="first_name" class="input" placeholder="Jean">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Nom</label>
+                            <input type="text" name="last_name" class="input" placeholder="Dupont">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Bio</label>
+                        <textarea name="bio" class="input h-24" placeholder="Parlez de vous et de votre passion pour les jeux de société..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Téléphone</label>
+                            <input type="tel" name="phone" class="input" placeholder="06 XX XX XX XX">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Ville</label>
+                            <input type="text" name="city" class="input" placeholder="Paris">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Code postal</label>
+                            <input type="text" name="postal_code" class="input" placeholder="75000">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Pays</label>
+                            <input type="text" name="country" class="input" placeholder="France">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Adresse</label>
+                        <input type="text" name="address" class="input" placeholder="123 Rue de la Paix">
+                    </div>
+
+                    <button type="submit" class="btn-primary py-3">Sauvegarder les modifications</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products-tab" class="tab-content hidden">
+            <h2 class="text-2xl font-bold mb-6">Mes annonces</h2>
+            <div id="my-products" class="grid-products">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+
+        <!-- Purchases Tab -->
+        <div id="purchases-tab" class="tab-content hidden">
+            <h2 class="text-2xl font-bold mb-6">Mes achats</h2>
+            <div id="purchases-list" class="space-y-4">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+
+        <!-- Sales Tab -->
+        <div id="sales-tab" class="tab-content hidden">
+            <h2 class="text-2xl font-bold mb-6">Mes ventes</h2>
+            <div id="sales-list" class="space-y-4">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+        document.getElementById('not-logged').classList.remove('hidden');
+        document.getElementById('logged').classList.add('hidden');
+    } else {
+        document.getElementById('not-logged').classList.add('hidden');
+        document.getElementById('logged').classList.remove('hidden');
+
+        // Load profile
+        fetch('/api/auth/profile', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(r => r.json())
+        .then(user => {
+            document.querySelectorAll('#profile-form input, #profile-form textarea').forEach(el => {
+                if (user[el.name]) el.value = user[el.name];
+            });
+        });
+
+        // Load my products
+        fetch('/api/selling/products', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('my-products');
+            if (data.products.length === 0) {
+                container.innerHTML = '<p class="col-span-full text-center text-gray-600">Vous n\'avez pas encore d\'annonces. <a href="/vendre" class="text-orange-500 hover:text-orange-600">Créer une annonce</a></p>';
+            } else {
+                container.innerHTML = data.products.map(p => `
+                    <a href="/produit/${p.id}" class="product-card">
+                        <div class="product-image">
+                            <img src="${p.image_url || '/static/placeholder.svg'}" alt="${p.title}" />
+                        </div>
+                        <h3 class="font-semibold text-sm line-clamp-2 mb-2">${p.title}</h3>
+                        <p class="text-orange-600 font-bold">${p.price.toFixed(2)}€</p>
+                    </a>
+                `).join('');
+            }
+        });
+
+        // Load orders
+        Promise.all([
+            fetch('/api/orders?role=buyer', { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json()),
+            fetch('/api/orders?role=seller', { headers: { 'Authorization': `Bearer ${token}` } }).then(r => r.json())
+        ]).then(([purchases, sales]) => {
+            const purchasesContainer = document.getElementById('purchases-list');
+            if (purchases.orders.length === 0) {
+                purchasesContainer.innerHTML = '<p class="text-gray-600">Vous n\'avez pas encore d\'achats.</p>';
+            } else {
+                purchasesContainer.innerHTML = purchases.orders.map(o => `
+                    <div class="card-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold mb-1">Commande #${o.id}</p>
+                                <p class="text-sm text-gray-600">${o.total_price.toFixed(2)}€ • ${o.status}</p>
+                            </div>
+                            <a href="/commande/${o.id}" class="text-orange-500 hover:text-orange-600 font-semibold transition">Voir →</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const salesContainer = document.getElementById('sales-list');
+            if (sales.orders.length === 0) {
+                salesContainer.innerHTML = '<p class="text-gray-600">Vous n\'avez pas encore de ventes.</p>';
+            } else {
+                salesContainer.innerHTML = sales.orders.map(o => `
+                    <div class="card-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold mb-1">Commande #${o.id}</p>
+                                <p class="text-sm text-gray-600">${o.total_price.toFixed(2)}€ • ${o.status}</p>
+                            </div>
+                            <a href="/commande/${o.id}" class="text-orange-500 hover:text-orange-600 font-semibold transition">Voir →</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        });
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active', 'border-orange-500', 'text-orange-500');
+                b.classList.add('border-transparent', 'text-gray-600');
+            });
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+            e.target.classList.add('active', 'border-orange-500', 'text-orange-500');
+            e.target.classList.remove('border-transparent', 'text-gray-600');
+            document.getElementById(e.target.dataset.tab + '-tab').classList.remove('hidden');
+        });
+    });
+
+    // Save profile
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+
+        const response = await fetch('/api/users/me', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Profil mis à jour avec succès !');
+        } else {
+            alert('Erreur lors de la mise à jour du profil');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Panier - Jeux m'occupe{% endblock %}
+
+{% block content %}
+<div class="header-container py-8">
+    <h1 class="section-heading mb-8">Votre panier</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2">
+            <div id="cart-items" class="space-y-4">
+                <!-- Loaded by JS -->
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="lg:col-span-1">
+            <div class="card-lg sticky top-24 h-fit">
+                <h2 class="text-xl font-bold mb-6">Résumé de commande</h2>
+
+                <div class="space-y-3 text-sm mb-6">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Sous-total</span>
+                        <span id="subtotal">0,00€</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Livraison</span>
+                        <span class="text-green-600 font-semibold">Gratuit</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4 mb-6">
+                    <div class="flex justify-between font-bold text-lg">
+                        <span>Total</span>
+                        <span id="total" class="text-orange-600">0,00€</span>
+                    </div>
+                </div>
+
+                <button id="checkout-btn" class="btn-primary w-full py-3 mb-3">Valider la commande</button>
+                <a href="/acheter" class="btn-secondary w-full py-3 text-center block">Continuer vos achats</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function loadCart() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            document.getElementById('cart-items').innerHTML = `
+                <div class="card-lg text-center py-12">
+                    <p class="text-gray-600 mb-4">Connectez-vous pour voir votre panier</p>
+                    <a href="/login" class="btn-primary">Se connecter</a>
+                </div>
+            `;
+            document.getElementById('checkout-btn').disabled = true;
+            return;
+        }
+
+        const response = await fetch('/api/cart', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        const container = document.getElementById('cart-items');
+        if (data.items.length === 0) {
+            container.innerHTML = `
+                <div class="card-lg text-center py-12">
+                    <p class="text-gray-600 mb-4">Votre panier est vide</p>
+                    <a href="/acheter" class="btn-primary">Continuer vos achats</a>
+                </div>
+            `;
+        } else {
+            container.innerHTML = data.items.map(item => `
+                <div class="card-lg flex gap-4">
+                    <img src="${item.product.image_url || '/static/placeholder.svg'}" alt="${item.product.title}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0">
+                    <div class="flex-1">
+                        <h3 class="font-semibold mb-1">${item.product.title}</h3>
+                        <p class="text-sm text-gray-600 mb-2">${item.product.price.toFixed(2)}€</p>
+                        <p class="text-sm text-gray-500">Quantité: ${item.quantity}</p>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-red-600 hover:text-red-700 p-2 transition" title="Supprimer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('subtotal').textContent = data.total_price.toFixed(2) + '€';
+        document.getElementById('total').textContent = data.total_price.toFixed(2) + '€';
+    }
+
+    async function removeFromCart(itemId) {
+        const token = localStorage.getItem('access_token');
+        await fetch(`/api/cart/items/${itemId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        loadCart();
+    }
+
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login';
+        } else {
+            window.location.href = '/commande';
+        }
+    });
+
+    loadCart();
+</script>
+{% endblock %}
+
+<script>
+    async function loadCart() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            document.getElementById('cart-items').innerHTML = '<p>Connectez-vous pour voir votre panier</p>';
+            return;
+        }
+
+        const response = await fetch('/api/cart', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        const container = document.getElementById('cart-items');
+        if (data.items.length === 0) {
+            container.innerHTML = '<p>Votre panier est vide</p>';
+        } else {
+            container.innerHTML = data.items.map(item => `
+                <div class="card flex gap-4">
+                    <img src="${item.product.image_url || '/static/placeholder.svg'}" alt="${item.product.title}" class="w-20 h-20 object-cover rounded">
+                    <div class="flex-1">
+                        <h3 class="font-semibold">${item.product.title}</h3>
+                        <p class="text-sm text-gray-600">${item.product.price.toFixed(2)}€ x ${item.quantity}</p>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-red-600 hover:text-red-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
