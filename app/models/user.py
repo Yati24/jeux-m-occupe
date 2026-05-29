@@ -29,6 +29,7 @@ class User(db.Model):
     sold_orders = db.relationship('Order', backref='seller', lazy='dynamic', foreign_keys='Order.seller_id')
     reviews_given = db.relationship('Review', backref='reviewer', lazy='dynamic', foreign_keys='Review.reviewer_id')
     reviews_received = db.relationship('Review', backref='seller_reviewed', lazy='dynamic', foreign_keys='Review.seller_id')
+    wishlists = db.relationship('Wishlist', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def set_password(self, password):
         self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

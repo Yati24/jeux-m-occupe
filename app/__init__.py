@@ -18,7 +18,7 @@ def create_app(config_name='development'):
     CORS(app)
 
     with app.app_context():
-        from app.models import user, product, cart, order, review
+        from app.models import user, product, cart, order, review, wishlist, message
         db.create_all()
 
     from app.routes import auth, products, cart as cart_bp, orders, users, selling

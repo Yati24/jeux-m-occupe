@@ -7,9 +7,11 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False, index=True)
     description = db.Column(db.Text)
+    publisher = db.Column(db.String(255))
     category = db.Column(db.String(100), nullable=False, index=True)
     condition = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False, index=True)
+    stock = db.Column(db.Integer, default=1, nullable=False)  # Quantité disponible
     image_url = db.Column(db.String(255))
     seller_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     status = db.Column(db.String(50), default='available', index=True)
@@ -22,15 +24,18 @@ class Product(db.Model):
 
     cart_items = db.relationship('CartItem', backref='product', lazy='dynamic', cascade='all, delete-orphan')
     order_items = db.relationship('OrderItem', backref='product', lazy='dynamic')
+    wishlists = db.relationship('Wishlist', backref='product', lazy='dynamic', cascade='all, delete-orphan')
 
     def to_dict(self, include_seller=True):
         data = {
             'id': self.id,
             'title': self.title,
             'description': self.description,
+            'publisher': self.publisher,
             'category': self.category,
             'condition': self.condition,
             'price': self.price,
+            'stock': self.stock,
             'image_url': self.image_url,
             'status': self.status,
             'number_of_players': self.number_of_players,
