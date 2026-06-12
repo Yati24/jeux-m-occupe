@@ -20,6 +20,7 @@ class User(db.Model):
     postal_code = db.Column(db.String(10))
     country = db.Column(db.String(100))
     seller_rating = db.Column(db.Float, default=5.0)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -50,7 +51,7 @@ class User(db.Model):
             'address': self.address if include_sensitive else None,
             'city': self.city,
             'seller_rating': self.seller_rating,
+            'is_admin': self.is_admin,
             'created_at': self.created_at.isoformat()
         }
         return data
-
