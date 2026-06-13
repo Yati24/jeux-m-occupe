@@ -90,10 +90,11 @@
 
         if (response.ok) {
             const data = await response.json();
-            alert('Commande confirmée!');
-            window.location.href = '/compte';
+            showToast('Commande confirmée !', 'success');
+            setTimeout(() => window.location.href = '/compte', 1500);
         } else {
-            alert('Erreur lors de la commande');
+            const data = await response.json();
+            showToast(data.error || 'Erreur lors de la commande', 'error');
         }
     });
 

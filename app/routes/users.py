@@ -23,7 +23,7 @@ def get_user(user_id):
 @bp.route('/me', methods=['GET'])
 @jwt_required()
 def get_current_user():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
 
     if not user:
@@ -34,7 +34,7 @@ def get_current_user():
 @bp.route('/me', methods=['PATCH'])
 @jwt_required()
 def update_profile():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
 
     if not user:

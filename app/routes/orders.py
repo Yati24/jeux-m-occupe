@@ -10,7 +10,7 @@ bp = Blueprint('orders', __name__, url_prefix='/api/orders')
 @bp.route('', methods=['POST'])
 @jwt_required()
 def create_order():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json() or {}
 
     cart = Cart.query.filter_by(user_id=user_id).first()
@@ -67,7 +67,7 @@ def create_order():
 @bp.route('', methods=['GET'])
 @jwt_required()
 def list_orders():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
 
     role = request.args.get('role', 'buyer')
 
@@ -81,7 +81,7 @@ def list_orders():
 @bp.route('/<int:order_id>', methods=['GET'])
 @jwt_required()
 def get_order(order_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     order = Order.query.get(order_id)
 
     if not order or (order.buyer_id != user_id and order.seller_id != user_id):
@@ -92,7 +92,7 @@ def get_order(order_id):
 @bp.route('/<int:order_id>/status', methods=['PATCH'])
 @jwt_required()
 def update_order_status(order_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     order = Order.query.get(order_id)
 
     if not order or order.seller_id != user_id:

@@ -29,7 +29,7 @@ def register():
     db.session.add(user)
     db.session.commit()
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
     return {'message': 'User created', 'access_token': access_token, 'user': user.to_dict()}, 201
 
 @bp.route('/login', methods=['POST'])
@@ -43,7 +43,7 @@ def login():
     if not user or not user.check_password(data['password']):
         return {'error': 'Invalid credentials'}, 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
     return {'access_token': access_token, 'user': user.to_dict(include_sensitive=True)}, 200
 
 @bp.route('/profile', methods=['GET'])
@@ -52,7 +52,7 @@ def get_profile():
 
     @jwt_required()
     def _get_profile():
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         user = User.query.get(user_id)
         if not user:
             return {'error': 'User not found'}, 404

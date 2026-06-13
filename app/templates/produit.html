@@ -262,41 +262,11 @@
     }
 
     function addToCart() {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
-
-        fetch('/api/cart/items', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ product_id: productId, quantity: 1 })
-        }).then(r => r.json()).then(() => {
-            alert('Ajouté au panier!');
-        });
+        addToCartAPI(productId, 1, event);
     }
 
     function addToCartProduct(pId) {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
-
-        fetch('/api/cart/items', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ product_id: pId, quantity: 1 })
-        }).then(r => r.json()).then(() => {
-            alert('Ajouté au panier!');
-        });
+        addToCartAPI(pId, 1, event);
     }
 
     loadProduct();

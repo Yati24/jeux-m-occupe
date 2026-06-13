@@ -33,7 +33,7 @@
                 <div class="border-t border-gray-200 pt-4 mb-6">
                     <div class="flex justify-between font-bold text-lg">
                         <span>Total</span>
-                        <span id="total" class="text-orange-600">0,00€</span>
+                        <span id="total" class="text-gray-900">0,00€</span>
                     </div>
                 </div>
 
@@ -61,7 +61,30 @@
         const response = await fetch('/api/cart', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (!response.ok) {
+            document.getElementById('cart-items').innerHTML = `
+                <div class="card-lg text-center py-12">
+                    <p class="text-red-600 mb-2">Erreur lors du chargement du panier</p>
+                    <p class="text-gray-500 text-sm mb-4">Veuillez réessayer ou vous reconnecter</p>
+                    <button onclick="loadCart()" class="btn-primary">Réessayer</button>
+                </div>
+            `;
+            return;
+        }
+
         const data = await response.json();
+        if (!data.items) {
+            document.getElementById('cart-items').innerHTML = `
+                <div class="card-lg text-center py-12">
+                    <p class="text-gray-600 mb-4">Votre panier est vide</p>
+                    <a href="/acheter" class="btn-primary">Continuer vos achats</a>
+                </div>
+            `;
+            document.getElementById('subtotal').textContent = '0,00€';
+            document.getElementById('total').textContent = '0,00€';
+            return;
+        }
 
         const container = document.getElementById('cart-items');
         if (data.items.length === 0) {
@@ -77,10 +100,11 @@
                     <img src="${item.product.image_url || '/static/placeholder.svg'}" alt="${item.product.title}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0">
                     <div class="flex-1">
                         <h3 class="font-semibold mb-1">${item.product.title}</h3>
-                        <p class="text-sm text-gray-600 mb-2">${item.product.price.toFixed(2)}€</p>
-                        <p class="text-sm text-gray-500">Quantité: ${item.quantity}</p>
+                        <p class="text-sm text-gray-500 mb-1">${item.product.condition || 'État non précisé'}</p>
+                        <p class="text-sm text-gray-600">${item.product.price.toFixed(2)}€</p>
+                        <p class="text-xs text-gray-400 mt-1">Qté: ${item.quantity}</p>
                     </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-red-600 hover:text-red-700 p-2 transition" title="Supprimer">
+                    <button onclick="removeFromCart(${item.id})" class="text-red-600 hover:text-red-700 p-2 transition self-start" title="Supprimer">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
@@ -100,6 +124,7 @@
             headers: { 'Authorization': `Bearer ${token}` }
         });
         loadCart();
+        updateCartCount();
     }
 
     document.getElementById('checkout-btn').addEventListener('click', () => {
@@ -114,30 +139,3 @@
     loadCart();
 </script>
 {% endblock %}
-
-<script>
-    async function loadCart() {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            document.getElementById('cart-items').innerHTML = '<p>Connectez-vous pour voir votre panier</p>';
-            return;
-        }
-
-        const response = await fetch('/api/cart', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await response.json();
-
-        const container = document.getElementById('cart-items');
-        if (data.items.length === 0) {
-            container.innerHTML = '<p>Votre panier est vide</p>';
-        } else {
-            container.innerHTML = data.items.map(item => `
-                <div class="card flex gap-4">
-                    <img src="${item.product.image_url || '/static/placeholder.svg'}" alt="${item.product.title}" class="w-20 h-20 object-cover rounded">
-                    <div class="flex-1">
-                        <h3 class="font-semibold">${item.product.title}</h3>
-                        <p class="text-sm text-gray-600">${item.product.price.toFixed(2)}€ x ${item.quantity}</p>
-                    </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-red-600 hover:text-red-700">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

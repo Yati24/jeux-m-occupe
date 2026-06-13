@@ -16,8 +16,8 @@ class Cart(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'items': [item.to_dict() for item in self.items],
-            'total_price': sum(item.product.price for item in self.items),
-            'item_count': self.items.count()
+            'total_price': sum(item.product.price * item.quantity for item in self.items),
+            'item_count': sum(item.quantity for item in self.items)
         }
 
 class CartItem(db.Model):

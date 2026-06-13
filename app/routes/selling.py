@@ -9,7 +9,7 @@ bp = Blueprint('selling', __name__, url_prefix='/api/selling')
 @bp.route('/products', methods=['POST'])
 @jwt_required()
 def create_product():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json() or {}
 
     required_fields = ['title', 'category', 'condition', 'price']
@@ -37,7 +37,7 @@ def create_product():
 @bp.route('/products', methods=['GET'])
 @jwt_required()
 def list_my_products():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 12, type=int)
@@ -53,7 +53,7 @@ def list_my_products():
 @bp.route('/products/<int:product_id>', methods=['PATCH'])
 @jwt_required()
 def update_product(product_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     product = Product.query.get(product_id)
 
     if not product or product.seller_id != user_id:
@@ -73,7 +73,7 @@ def update_product(product_id):
 @bp.route('/products/<int:product_id>', methods=['DELETE'])
 @jwt_required()
 def delete_product(product_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     product = Product.query.get(product_id)
 
     if not product or product.seller_id != user_id:

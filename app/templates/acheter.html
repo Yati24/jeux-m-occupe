@@ -127,7 +127,7 @@
                                 <span class="home-product-price">${price.toFixed(2)}€</span>
                                 <span class="home-product-old-price">${newPrice.toFixed(2)}€</span>
                             </div>
-                            <span class="home-product-add">Ajouter</span>
+                            <button onclick="addToCartFromList(${product.id}, event)" class="home-product-add">Ajouter</button>
                         </div>
                     </div>
                 </a>
@@ -177,5 +177,11 @@
     });
 
     loadProducts();
+
+    async function addToCartFromList(productId, event) {
+        event.preventDefault();
+        event.stopPropagation();
+        await addToCartAPI(productId, 1, event);
+    }
 </script>
 {% endblock %}
