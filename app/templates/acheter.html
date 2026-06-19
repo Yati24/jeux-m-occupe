@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Acheter - Jeux m'occupe{% endblock %}
+{% block title %}Acheter des jeux de société d'occasion | Jeux m'occupe{% endblock %}
+{% block meta_description %}Parcourez notre catalogue de jeux de société d'occasion vérifiés et complets. Filtrez par catégorie, prix et état. Expédition rapide sous 48h.{% endblock %}
 
 {% block content %}
 <!-- Page Header - Black Section -->
@@ -39,27 +40,9 @@
                         <option value="">Toutes les catégories</option>
                         <option value="Pour les petits">Pour les petits</option>
                         <option value="En famille">En famille</option>
-                        <option value="Jeux expertes">Jeux expertes</option>
+                        <option value="Jeux Experts">Jeux Experts</option>
+                        <option value="Ambiance & Soirée">Ambiance &amp; Soirée</option>
                     </select>
-                </div>
-
-                <!-- Mécanique Filter -->
-                <div>
-                    <h3 class="font-bold text-gray-900 mb-4">Mécanique</h3>
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" id="mechanic-competitif" class="w-4 h-4 rounded" value="Compétitif">
-                            <span class="text-sm text-gray-600">Compétitif</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" id="mechanic-strategie" class="w-4 h-4 rounded" value="Stratégie">
-                            <span class="text-sm text-gray-600">Stratégie</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" id="mechanic-ambiance" class="w-4 h-4 rounded" value="Ambiance">
-                            <span class="text-sm text-gray-600">Ambiance</span>
-                        </label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -97,8 +80,10 @@
 
         // Update subtitle
         const total = data.total || 0;
-        document.getElementById('catalog-subtitle').textContent = 
-            `${total} jeux disponible - 100% vérifiés et complets`;
+        const plural = total > 1 ? 'jeux disponibles' : 'jeu disponible';
+        document.getElementById('catalog-subtitle').textContent = category
+            ? `${total} ${plural} dans « ${category} »`
+            : `${total} ${plural} · 100% vérifiés et complets`;
 
         // Render products with home-page card style
         const container = document.getElementById('products-container');
@@ -168,13 +153,13 @@
         loadProducts();
     });
 
-    // Mechanic filters
-    ['competitif', 'strategie', 'ambiance'].forEach(mechanic => {
-        document.getElementById(`mechanic-${mechanic}`).addEventListener('change', () => {
-            currentPage = 1;
-            loadProducts();
-        });
-    });
+    // Pré-sélection de la catégorie depuis l'URL (?category=...)
+    const urlCategory = new URLSearchParams(window.location.search).get('category');
+    if (urlCategory) {
+        const select = document.getElementById('category-filter');
+        const match = [...select.options].find(o => o.value === urlCategory);
+        if (match) select.value = urlCategory;
+    }
 
     loadProducts();
 

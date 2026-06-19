@@ -1,6 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}Produit - Jeux m'occupe{% endblock %}
+{% block title %}{{ product.title }} d'occasion - {{ '%.2f'|format(product.price) }} € | Jeux m'occupe{% endblock %}
+
+{% block meta_description %}Achetez {{ product.title }} d'occasion ({{ product.condition }}) à {{ '%.2f'|format(product.price) }} €. Jeu de société vérifié et complet, expédié sous 48h par Jeux m'occupe.{% endblock %}
+
+{% block og_type %}product{% endblock %}
+{% block og_image %}{{ product.image_url or url_for('static', filename='img/PNG/ICONS-10.png', _external=True) }}{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": {{ product.title|tojson }},
+    "image": {{ (product.image_url or url_for('static', filename='img/PNG/ICONS-10.png', _external=True))|tojson }},
+    "description": {{ (product.description or product.title)|tojson }},
+    "category": {{ product.category|tojson }},
+    "sku": "JEU-{{ product.id }}",
+    "brand": { "@type": "Brand", "name": {{ (product.publisher or "Jeux m'occupe")|tojson }} },
+    "offers": {
+        "@type": "Offer",
+        "url": {{ request.base_url|tojson }},
+        "priceCurrency": "EUR",
+        "price": {{ '%.2f'|format(product.price)|tojson }},
+        "itemCondition": "https://schema.org/UsedCondition",
+        "availability": "{{ 'https://schema.org/InStock' if (product.stock and product.status == 'available') else 'https://schema.org/OutOfStock' }}",
+        "seller": { "@type": "Organization", "name": "Jeux m'occupe" }
+    }
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="header-container py-6">
@@ -10,7 +39,7 @@
         <span>/</span>
         <a href="/acheter" class="hover:text-orange-500">Catalogue</a>
         <span>/</span>
-        <span id="breadcrumb-title" class="text-gray-900 font-medium"></span>
+        <span id="breadcrumb-title" class="text-gray-900 font-medium">{{ product.title }}</span>
     </nav>
 
     <!-- Back button -->
@@ -27,21 +56,18 @@
         <div>
             <!-- Main Image -->
             <div class="bg-gray-100 rounded-xl aspect-square overflow-hidden mb-4 relative">
-                <img id="product-image-main" src="" alt="" class="w-full h-full object-cover">
+                <img id="product-image-main" src="{{ product.image_url or '/static/placeholder.svg' }}" alt="{{ product.title }} - jeu de société d'occasion {{ product.condition }}" class="w-full h-full object-cover">
                 <!-- Badge -->
                 <div id="product-badge" class="absolute top-4 left-4 badge-orange hidden"></div>
             </div>
             <!-- Thumbnails -->
-            <div id="product-thumbnails" class="flex gap-2">
-                <div class="w-16 h-16 bg-gray-200 rounded-lg border-2 border-gray-300 cursor-pointer overflow-hidden">
-                    <img id="product-image-main" src="" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="w-16 h-16 bg-gray-200 rounded-lg cursor-pointer overflow-hidden">
-                    <img src="" alt="" class="w-full h-full object-cover opacity-60">
-                </div>
-                <div class="w-16 h-16 bg-gray-200 rounded-lg cursor-pointer overflow-hidden">
-                    <img src="" alt="" class="w-full h-full object-cover opacity-60">
-                </div>
+            <div id="product-thumbnails" class="flex gap-2 flex-wrap">
+                {% for img in product.image_list %}
+                <button type="button" onclick="document.getElementById('product-image-main').src='{{ img }}'"
+                        class="w-16 h-16 bg-gray-200 rounded-lg border-2 {{ 'border-orange-500' if loop.first else 'border-gray-200' }} cursor-pointer overflow-hidden hover:border-orange-500 transition">
+                    <img src="{{ img }}" alt="Photo {{ loop.index }} de {{ product.title }}" class="w-full h-full object-cover">
+                </button>
+                {% endfor %}
             </div>
         </div>
 
@@ -51,8 +77,8 @@
             <div class="mb-6">
                 <div class="flex items-start justify-between mb-3">
                     <div>
-                        <p class="text-xs text-gray-500 uppercase tracking-wide" id="product-publisher"></p>
-                        <h1 id="product-title" class="text-3xl md:text-4xl font-bold"></h1>
+                        <p class="text-xs text-gray-500 uppercase tracking-wide" id="product-publisher">{{ product.publisher or 'Éditeur' }}</p>
+                        <h1 id="product-title" class="text-3xl md:text-4xl font-bold">{{ product.title }}</h1>
                     </div>
                 </div>
 
@@ -68,9 +94,35 @@
             <!-- Price Section -->
             <div class="card-lg bg-orange-50 border-orange-100 mb-6">
                 <div class="flex items-baseline gap-3 mb-2">
-                    <span id="product-price" class="text-3xl font-bold text-gray-900">22 €</span>
-                    <span id="product-original-price" class="text-lg text-gray-400 line-through">55 €</span>
+                    <span id="product-price" class="text-3xl font-bold text-gray-900">{{ '%.2f'|format(product.price) }}€</span>
+                    <span id="product-original-price" class="text-lg text-gray-400 line-through"></span>
                     <span id="product-discount" class="badge-orange">-60% économisé</span>
+                </div>
+            </div>
+
+            <!-- Vendeur -->
+            <div class="card mb-6">
+                <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-3">Vendu par</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 font-bold flex items-center justify-center shrink-0 overflow-hidden">
+                        {% if product.seller.avatar %}
+                        <img src="{{ product.seller.avatar }}" alt="{{ product.seller.username }}" class="w-full h-full object-cover">
+                        {% else %}
+                        {{ (product.seller.first_name or product.seller.username)[0] | upper }}
+                        {% endif %}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold text-gray-900 truncate">
+                            {{ product.seller.first_name }} {{ product.seller.last_name }}
+                            <span class="text-gray-400 font-normal">@{{ product.seller.username }}</span>
+                        </p>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <span class="text-yellow-400">★</span>
+                            <span class="font-medium">{{ '%.1f'|format(product.seller.seller_rating or 5) }}/5</span>
+                            {% if product.seller.city %}<span class="text-gray-300">·</span><span>{{ product.seller.city }}</span>{% endif %}
+                            {% if product.seller.created_at %}<span class="text-gray-300">·</span><span>Membre depuis {{ product.seller.created_at.year }}</span>{% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -90,17 +142,17 @@
                 <div class="text-center">
                     <div class="text-2xl mb-2">👥</div>
                     <p class="text-xs text-gray-600">Joueurs</p>
-                    <p id="product-players" class="font-bold text-sm">3 - 4</p>
+                    <p id="product-players" class="font-bold text-sm">{{ product.number_of_players or '-' }}</p>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl mb-2">⏱️</div>
                     <p class="text-xs text-gray-600">Durée</p>
-                    <p id="product-time" class="font-bold text-sm">60 - 120 min</p>
+                    <p id="product-time" class="font-bold text-sm">{{ product.playing_time or '-' }}</p>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl mb-2">🎂</div>
                     <p class="text-xs text-gray-600">Âge min</p>
-                    <p id="product-age" class="font-bold text-sm">10 ans+</p>
+                    <p id="product-age" class="font-bold text-sm">{{ (product.min_age ~ ' ans+') if product.min_age else '-' }}</p>
                 </div>
             </div>
 
@@ -147,7 +199,7 @@
                     <span class="text-2xl">🎲</span>
                     <div>
                         <p class="font-bold">Vous avez ce jeu ?</p>
-                        <p class="text-sm text-gray-600">On vous le rachète 👉 en bon d'achat ou virement. <a href="#" class="text-orange-500 font-medium">Estimer →</a></p>
+                        <p class="text-sm text-gray-600">On vous le rachète 👉 en bon d'achat ou virement. <a href="/vendre" class="text-orange-500 font-medium">Estimer →</a></p>
                     </div>
                 </div>
             </div>
@@ -159,7 +211,7 @@
 <section class="bg-gray-50 py-12 mb-12">
     <div class="header-container">
         <h2 class="text-2xl font-bold mb-6">Description du jeu</h2>
-        <p id="product-description" class="text-gray-700 leading-relaxed max-w-3xl"></p>
+        <p id="product-description" class="text-gray-700 leading-relaxed max-w-3xl">{{ product.description or '' }}</p>
     </div>
 </section>
 
@@ -211,7 +263,7 @@
         document.getElementById('reviews-list').innerHTML = reviewsData.reviews.map(review => `
             <div class="card">
                 <div class="flex items-start gap-3 mb-2">
-                    <img src="${review.reviewer.avatar || '/static/placeholder.svg'}" alt="" class="w-10 h-10 rounded-full">
+                    <img src="${review.reviewer.avatar || '/static/placeholder.svg'}" alt="Avatar de ${review.reviewer.username}" class="w-10 h-10 rounded-full">
                     <div class="flex-1">
                         <p class="font-semibold">${review.reviewer.username}</p>
                         <p class="text-sm text-yellow-500">★ ${review.rating}/5</p>

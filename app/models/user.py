@@ -21,6 +21,8 @@ class User(db.Model):
     country = db.Column(db.String(100))
     seller_rating = db.Column(db.Float, default=5.0)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_banned = db.Column(db.Boolean, default=False, nullable=False)
+    ban_reason = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -52,6 +54,7 @@ class User(db.Model):
             'city': self.city,
             'seller_rating': self.seller_rating,
             'is_admin': self.is_admin,
+            'is_banned': self.is_banned,
             'created_at': self.created_at.isoformat()
         }
         return data

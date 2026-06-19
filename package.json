@@ -8,10 +8,13 @@
     "tailwind:watch": "tailwindcss -i ./app/static/input.css -o ./app/static/styles.css --watch",
     "tailwind:build": "tailwindcss -i ./app/static/input.css -o ./app/static/styles.css --minify"
   },
-  "keywords": ["boardgames", "ecommerce"],
+  "keywords": [
+    "boardgames",
+    "ecommerce"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^4.3.1"
   }
 }

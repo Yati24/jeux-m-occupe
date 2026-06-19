@@ -40,3 +40,8 @@ app/static/styles.css
 /maquette
 /illu
 /arboresence
+
+# Photos uploadées par les utilisateurs
+app/static/uploads/
+
+tailwindcss.exe

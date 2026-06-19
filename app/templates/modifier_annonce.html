@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier « {{ product.title }} » | Jeux m'occupe{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<!-- Accès refusé (non propriétaire) -->
+<div id="denied" class="hidden header-container py-20 text-center">
+    <div class="text-5xl mb-4">🔒</div>
+    <h1 class="text-2xl font-bold mb-2">Accès refusé</h1>
+    <p class="text-gray-600 mb-6">Vous ne pouvez modifier que vos propres annonces.</p>
+    <a href="/compte" class="btn-primary">Retour à mon compte</a>
+</div>
+
+<div id="editor" class="hidden">
+    <!-- Bande sombre -->
+    <section class="bg-neutral-950 text-white">
+        <div class="header-container py-10 flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl shrink-0">✏️</div>
+            <div>
+                <p class="text-gray-400 text-sm">Modifier mon annonce</p>
+                <h1 class="text-2xl md:text-3xl font-bold">{{ product.title }}</h1>
+                <p class="text-gray-400 text-sm mt-1">Mettez à jour les informations et les photos</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu -->
+    <div class="bg-gray-50 min-h-screen">
+        <div class="header-container py-10">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 max-w-3xl">
+                <form id="edit-form" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Titre du jeu *</label>
+                        <input type="text" name="title" class="input" value="{{ product.title }}" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Description</label>
+                        <textarea name="description" class="input h-24" rows="4">{{ product.description or '' }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Catégorie *</label>
+                            <select name="category" class="input" required>
+                                {% for cat in ['Jeux de société', 'Jeux de stratégie', 'Jeux de party', 'Jeux enfants', 'Jeux de rôle'] %}
+                                <option {{ 'selected' if product.category == cat else '' }}>{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">État *</label>
+                            <select name="condition" class="input" required>
+                                {% for cond in ['Comme neuf', 'Très bon état', 'Bon état', 'Acceptable'] %}
+                                <option {{ 'selected' if product.condition == cond else '' }}>{{ cond }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Prix (€) *</label>
+                            <input type="number" name="price" class="input" step="0.01" min="0" value="{{ product.price }}" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Année de publication</label>
+                            <input type="number" name="year" class="input" min="1900" max="2099" value="{{ product.year or '' }}">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Nombre de joueurs</label>
+                            <input type="text" name="number_of_players" class="input" value="{{ product.number_of_players or '' }}">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Durée du jeu</label>
+                            <input type="text" name="playing_time" class="input" value="{{ product.playing_time or '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Photos -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-3">Photos du jeu <span class="text-gray-400 font-normal">(jusqu'à 8)</span></label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition" id="image-drop">
+                            <input type="file" name="images" accept="image/*" multiple class="hidden" id="image-input">
+                            <div>
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-sm font-semibold text-gray-900 mb-1">Cliquez ou glissez vos images ici</p>
+                                <p class="text-xs text-gray-600">Les photos existantes sont conservées — ajoutez ou supprimez à votre guise</p>
+                            </div>
+                        </div>
+                        <div id="preview-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4"></div>
+                        <p id="preview-empty" class="text-xs text-gray-400 mt-3 hidden">La première photo sera l'image principale de l'annonce.</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                        <button type="submit" class="btn-primary flex-1 py-3 text-lg">Enregistrer les modifications</button>
+                        <a href="/compte" class="btn-secondary flex-1 py-3 text-center text-lg">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const token = localStorage.getItem('access_token');
+    if (!token) { window.location.href = '/login'; return; }
+
+    const SELLER_ID = {{ product.seller_id }};
+    const PRODUCT_ID = {{ product.id }};
+
+    // Vérifie que l'utilisateur connecté est bien le propriétaire
+    fetch('/api/users/me', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(user => {
+            if (!user || user.id !== SELLER_ID) {
+                document.getElementById('denied').classList.remove('hidden');
+            } else {
+                document.getElementById('editor').classList.remove('hidden');
+                initEditor();
+            }
+        })
+        .catch(() => { window.location.href = '/login'; });
+
+    function initEditor() {
+        const imageInput = document.getElementById('image-input');
+        const imageDropZone = document.getElementById('image-drop');
+        const previewGrid = document.getElementById('preview-grid');
+        const previewEmpty = document.getElementById('preview-empty');
+        const MAX_IMAGES = 8;
+        const ALLOWED = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+
+        // items : photos existantes (kind:'url') + nouvelles (kind:'file')
+        let items = {{ product.image_list | tojson }}.map(url => ({ kind: 'url', url }));
+
+        imageDropZone.addEventListener('click', () => imageInput.click());
+        imageDropZone.addEventListener('dragover', (e) => { e.preventDefault(); imageDropZone.classList.add('border-orange-500', 'bg-orange-50'); });
+        imageDropZone.addEventListener('dragleave', () => imageDropZone.classList.remove('border-orange-500', 'bg-orange-50'));
+        imageDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageDropZone.classList.remove('border-orange-500', 'bg-orange-50');
+            addFiles(e.dataTransfer.files);
+        });
+        imageInput.addEventListener('change', () => { addFiles(imageInput.files); imageInput.value = ''; });
+
+        function addFiles(fileList) {
+            for (const file of fileList) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!file.type.startsWith('image/') || !ALLOWED.includes(ext)) {
+                    showToast(`Format non supporté : ${file.name}`, 'error'); continue;
+                }
+                if (items.length >= MAX_IMAGES) { showToast(`Maximum ${MAX_IMAGES} photos`, 'error'); break; }
+                items.push({ kind: 'file', file });
+            }
+            render();
+        }
+
+        function render() {
+            previewGrid.innerHTML = '';
+            previewEmpty.classList.toggle('hidden', items.length === 0);
+            items.forEach((item, index) => {
+                const src = item.kind === 'url' ? item.url : URL.createObjectURL(item.file);
+                const cell = document.createElement('div');
+                cell.className = 'relative aspect-square rounded-xl overflow-hidden border border-gray-200';
+                cell.innerHTML = `
+                    <img src="${src}" alt="Photo ${index + 1}" class="w-full h-full object-cover">
+                    ${index === 0 ? '<span class="absolute top-1 left-1 bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">Principale</span>' : ''}
+                    <button type="button" data-remove="${index}" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white text-sm flex items-center justify-center hover:bg-red-600 transition" aria-label="Supprimer">×</button>
+                `;
+                previewGrid.appendChild(cell);
+            });
+        }
+
+        previewGrid.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-remove]');
+            if (!btn) return;
+            items.splice(Number(btn.dataset.remove), 1);
+            render();
+        });
+
+        render();
+
+        document.getElementById('edit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            const originalLabel = submitBtn.textContent;
+
+            try {
+                // 1) Upload des nouvelles photos
+                const newFiles = items.filter(i => i.kind === 'file').map(i => i.file);
+                let uploaded = [];
+                if (newFiles.length) {
+                    submitBtn.textContent = 'Envoi des photos…';
+                    const fd = new FormData();
+                    newFiles.forEach(f => fd.append('images', f));
+                    const up = await fetch('/api/selling/upload', {
+                        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd
+                    });
+                    if (!up.ok) throw new Error((await up.json()).error || 'échec de l\'upload');
+                    uploaded = (await up.json()).urls;
+                }
+
+                // 2) Reconstruit la galerie dans l'ordre affiché
+                let u = 0;
+                const finalImages = items.map(i => i.kind === 'url' ? i.url : uploaded[u++]);
+
+                // 3) PATCH de l'annonce
+                submitBtn.textContent = 'Enregistrement…';
+                const formData = new FormData(e.target);
+                const data = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    category: formData.get('category'),
+                    condition: formData.get('condition'),
+                    price: parseFloat(formData.get('price')),
+                    year: formData.get('year') || null,
+                    number_of_players: formData.get('number_of_players'),
+                    playing_time: formData.get('playing_time'),
+                    images: finalImages,
+                };
+                const res = await fetch(`/api/selling/products/${PRODUCT_ID}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error((await res.json()).error || 'modification impossible');
+
+                showToast('Annonce mise à jour !', 'success');
+                setTimeout(() => window.location.href = '/compte', 800);
+            } catch (err) {
+                showToast('Erreur : ' + err.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalLabel;
+            }
+        });
+    }
+})();
+</script>
+{% endblock %}

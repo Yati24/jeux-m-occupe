@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard admin - Jeux m'occupe{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div id="dashboard-loading" class="header-container py-24 text-center text-gray-500">
+    Chargement…
+</div>
+
+<div id="dashboard-content" class="hidden">
+    <!-- Bande sombre -->
+    <section class="bg-neutral-950 text-white">
+        <div class="header-container py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl shrink-0">🛠️</div>
+                <div>
+                    <p class="text-gray-400 text-sm">Espace administrateur</p>
+                    <h1 class="text-2xl md:text-3xl font-bold">Tableau de bord</h1>
+                    <p class="text-gray-400 text-sm mt-1">Marketplace de jeux de société d'occasion</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3" id="hero-pills"></div>
+        </div>
+    </section>
+
+    <div class="header-container py-10">
+        <!-- Cartes de statistiques -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10" id="stats-grid"></div>
+
+        <!-- Onglets -->
+        <div class="flex gap-2 border-b border-gray-200 mb-6 flex-wrap">
+            <button class="tab-btn py-4 px-3 font-semibold border-b-2 border-orange-500 text-orange-500 transition whitespace-nowrap" data-tab="sales">Ventes</button>
+            <button class="tab-btn py-4 px-3 font-semibold border-b-2 border-transparent text-gray-600 hover:text-gray-900 transition whitespace-nowrap" data-tab="products">Annonces</button>
+            <button class="tab-btn py-4 px-3 font-semibold border-b-2 border-transparent text-gray-600 hover:text-gray-900 transition whitespace-nowrap" data-tab="users">Utilisateurs</button>
+        </div>
+
+        <!-- Onglet Ventes -->
+        <section data-panel="sales">
+            <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                <h2 class="text-xl font-bold">Ventes &amp; commandes</h2>
+                <select id="sales-filter" class="input w-auto text-sm">
+                    <option value="">Tous les statuts</option>
+                    <option value="pending">En attente</option>
+                    <option value="paid">Payée</option>
+                    <option value="shipped">Expédiée</option>
+                    <option value="delivered">Livrée</option>
+                    <option value="cancelled">Annulée</option>
+                </select>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50 text-left text-gray-500 uppercase text-xs tracking-wide">
+                            <tr>
+                                <th class="px-5 py-3">#</th>
+                                <th class="px-5 py-3">Acheteur</th>
+                                <th class="px-5 py-3">Vendeur</th>
+                                <th class="px-5 py-3">Articles</th>
+                                <th class="px-5 py-3">Montant</th>
+                                <th class="px-5 py-3">Ville</th>
+                                <th class="px-5 py-3">Statut</th>
+                                <th class="px-5 py-3">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Onglet Annonces -->
+        <section data-panel="products" class="hidden">
+            <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                <h2 class="text-xl font-bold">Annonces</h2>
+                <input id="products-search" type="text" placeholder="Rechercher un titre…" class="input w-auto text-sm">
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50 text-left text-gray-500 uppercase text-xs tracking-wide">
+                            <tr>
+                                <th class="px-5 py-3">#</th>
+                                <th class="px-5 py-3">Titre</th>
+                                <th class="px-5 py-3">Catégorie</th>
+                                <th class="px-5 py-3">Prix</th>
+                                <th class="px-5 py-3">Vendeur</th>
+                                <th class="px-5 py-3">Statut</th>
+                                <th class="px-5 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Onglet Utilisateurs -->
+        <section data-panel="users" class="hidden">
+            <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                <h2 class="text-xl font-bold">Utilisateurs</h2>
+                <input id="users-search" type="text" placeholder="Rechercher nom / email…" class="input w-auto text-sm">
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50 text-left text-gray-500 uppercase text-xs tracking-wide">
+                            <tr>
+                                <th class="px-5 py-3">#</th>
+                                <th class="px-5 py-3">Utilisateur</th>
+                                <th class="px-5 py-3">Email</th>
+                                <th class="px-5 py-3">Annonces</th>
+                                <th class="px-5 py-3">Commandes</th>
+                                <th class="px-5 py-3">Note</th>
+                                <th class="px-5 py-3">Statut</th>
+                                <th class="px-5 py-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+(async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) { window.location.href = '/login'; return; }
+    const headers = { 'Authorization': `Bearer ${token}` };
+    const jsonHeaders = { ...headers, 'Content-Type': 'application/json' };
+    const api = async (url, opts = {}) => fetch(url, { headers: jsonHeaders, ...opts });
+
+    // ---- Contrôle d'accès admin ----
+    const statsRes = await fetch('/api/admin/stats', { headers });
+    if (statsRes.status === 401) { window.location.href = '/login'; return; }
+    if (statsRes.status === 403) { alert("Accès réservé aux administrateurs."); window.location.href = '/'; return; }
+    const stats = await statsRes.json();
+
+    const eur = (n) => (n ?? 0).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
+    const fmtDate = (d) => d ? new Date(d).toLocaleDateString('fr-FR') : '–';
+
+    // ---- Pastilles dans la bande sombre ----
+    const pills = [
+        { value: eur(stats.revenue), label: 'CA ventes' },
+        { value: stats.orders, label: 'commandes' },
+        { value: stats.users, label: 'membres' },
+    ];
+    document.getElementById('hero-pills').innerHTML = pills.map(p => `
+        <div class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-center">
+            <p class="text-lg font-bold">${p.value}</p>
+            <p class="text-xs text-gray-400">${p.label}</p>
+        </div>
+    `).join('');
+
+    // ---- Cartes de statistiques ----
+    const cards = [
+        { label: 'Chiffre d\'affaires', value: eur(stats.revenue), hint: `${stats.sales} ventes`, accent: 'text-orange-500' },
+        { label: 'Commandes', value: stats.orders, hint: `${stats.pending_orders} en attente` },
+        { label: 'Annonces actives', value: stats.active_listings, hint: `${stats.products} au total` },
+        { label: 'Utilisateurs', value: stats.users, hint: `+${stats.new_users_7d} cette semaine` },
+        { label: 'Comptes bannis', value: stats.banned_users, hint: 'suspendus', accent: stats.banned_users ? 'text-red-600' : '' },
+        { label: 'Avis', value: stats.reviews, hint: stats.avg_rating ? `${stats.avg_rating}/5 en moyenne` : 'aucune note' },
+        { label: 'Messages', value: stats.messages, hint: 'échangés' },
+    ];
+    document.getElementById('stats-grid').innerHTML = cards.map(c => `
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <p class="text-sm text-gray-500">${c.label}</p>
+            <p class="text-2xl font-bold mt-1 ${c.accent || 'text-gray-900'}">${c.value}</p>
+            <p class="text-xs text-gray-400 mt-1">${c.hint}</p>
+        </div>
+    `).join('');
+
+    // ---- Onglets ----
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('border-orange-500', 'text-orange-500');
+                b.classList.add('border-transparent', 'text-gray-600');
+            });
+            btn.classList.add('border-orange-500', 'text-orange-500');
+            btn.classList.remove('border-transparent', 'text-gray-600');
+            document.querySelectorAll('[data-panel]').forEach(p => p.classList.add('hidden'));
+            document.querySelector(`[data-panel="${btn.dataset.tab}"]`).classList.remove('hidden');
+        });
+    });
+
+    const statusBadge = (s) => {
+        const map = {
+            pending: 'bg-yellow-100 text-yellow-800', paid: 'bg-blue-100 text-blue-800',
+            shipped: 'bg-indigo-100 text-indigo-800', delivered: 'bg-green-100 text-green-700',
+            cancelled: 'bg-red-100 text-red-700', available: 'bg-green-100 text-green-700',
+            hidden: 'bg-gray-200 text-gray-700', sold: 'bg-blue-100 text-blue-800',
+        };
+        return `<span class="inline-block px-3 py-1 rounded-full text-xs font-semibold ${map[s] || 'bg-gray-100 text-gray-700'}">${s}</span>`;
+    };
+
+    // ---- Ventes ----
+    async function loadSales() {
+        const status = document.getElementById('sales-filter').value;
+        const { sales } = await (await api('/api/admin/sales' + (status ? `?status=${status}` : ''))).json();
+        const tbody = document.getElementById('sales-tbody');
+        if (!sales.length) { tbody.innerHTML = `<tr><td colspan="8" class="px-5 py-8 text-center text-gray-400">Aucune vente pour le moment</td></tr>`; return; }
+        tbody.innerHTML = sales.map(s => `
+            <tr class="border-t border-gray-100 hover:bg-gray-50 transition">
+                <td class="px-5 py-3 text-gray-400">#${s.id}</td>
+                <td class="px-5 py-3 font-medium">${s.buyer}</td>
+                <td class="px-5 py-3">${s.seller}</td>
+                <td class="px-5 py-3">${s.items_count}</td>
+                <td class="px-5 py-3 font-bold text-gray-900">${eur(s.total_price)}</td>
+                <td class="px-5 py-3">${s.shipping_city || '–'}</td>
+                <td class="px-5 py-3">${statusBadge(s.status)}</td>
+                <td class="px-5 py-3 text-gray-500">${fmtDate(s.created_at)}</td>
+            </tr>
+        `).join('');
+    }
+    document.getElementById('sales-filter').addEventListener('change', loadSales);
+
+    // ---- Annonces ----
+    async function loadProducts() {
+        const q = document.getElementById('products-search').value.trim();
+        const { products } = await (await api('/api/admin/products' + (q ? `?search=${encodeURIComponent(q)}` : ''))).json();
+        const tbody = document.getElementById('products-tbody');
+        if (!products.length) { tbody.innerHTML = `<tr><td colspan="7" class="px-5 py-8 text-center text-gray-400">Aucune annonce</td></tr>`; return; }
+        tbody.innerHTML = products.map(p => `
+            <tr class="border-t border-gray-100 hover:bg-gray-50 transition">
+                <td class="px-5 py-3 text-gray-400">#${p.id}</td>
+                <td class="px-5 py-3 font-medium">${p.title}</td>
+                <td class="px-5 py-3 text-gray-600">${p.category}</td>
+                <td class="px-5 py-3 font-bold text-gray-900">${eur(p.price)}</td>
+                <td class="px-5 py-3">${p.seller || '–'}</td>
+                <td class="px-5 py-3">${statusBadge(p.status)}</td>
+                <td class="px-5 py-3 whitespace-nowrap">
+                    ${p.status === 'hidden'
+                        ? `<button class="text-green-600 font-medium hover:underline mr-3" data-action="show" data-id="${p.id}">Republier</button>`
+                        : `<button class="text-yellow-600 font-medium hover:underline mr-3" data-action="hide" data-id="${p.id}">Masquer</button>`}
+                    <button class="text-red-600 font-medium hover:underline" data-action="delete" data-id="${p.id}">Supprimer</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+    document.getElementById('products-search').addEventListener('input', debounce(loadProducts, 300));
+    document.getElementById('products-tbody').addEventListener('click', async (e) => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const id = btn.dataset.id, action = btn.dataset.action;
+        if (action === 'delete') {
+            if (!confirm('Supprimer définitivement cette annonce ?')) return;
+            await api(`/api/admin/products/${id}`, { method: 'DELETE' });
+        } else {
+            const status = action === 'hide' ? 'hidden' : 'available';
+            await api(`/api/admin/products/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
+        }
+        loadProducts();
+    });
+
+    // ---- Utilisateurs ----
+    async function loadUsers() {
+        const q = document.getElementById('users-search').value.trim();
+        const { users } = await (await api('/api/admin/users' + (q ? `?search=${encodeURIComponent(q)}` : ''))).json();
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = users.map(u => `
+            <tr class="border-t border-gray-100 transition ${u.is_banned ? 'bg-red-50' : 'hover:bg-gray-50'}">
+                <td class="px-5 py-3 text-gray-400">#${u.id}</td>
+                <td class="px-5 py-3 font-medium">${u.username}${u.is_admin ? ' <span class="text-xs text-orange-500 font-semibold">(admin)</span>' : ''}</td>
+                <td class="px-5 py-3 text-gray-600">${u.email}</td>
+                <td class="px-5 py-3">${u.products_count}</td>
+                <td class="px-5 py-3">${u.orders_count}</td>
+                <td class="px-5 py-3">${u.seller_rating ?? '–'}</td>
+                <td class="px-5 py-3">${u.is_banned
+                    ? '<span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Banni</span>'
+                    : '<span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Actif</span>'}</td>
+                <td class="px-5 py-3">
+                    ${u.is_admin ? '<span class="text-gray-400 text-xs">—</span>'
+                        : u.is_banned
+                            ? `<button class="text-green-600 font-medium hover:underline" data-action="unban" data-id="${u.id}">Débannir</button>`
+                            : `<button class="text-red-600 font-medium hover:underline" data-action="ban" data-id="${u.id}">Bannir</button>`}
+                </td>
+            </tr>
+        `).join('');
+    }
+    document.getElementById('users-search').addEventListener('input', debounce(loadUsers, 300));
+    document.getElementById('users-tbody').addEventListener('click', async (e) => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const id = btn.dataset.id, action = btn.dataset.action;
+        if (action === 'ban') {
+            const reason = prompt('Motif du bannissement (optionnel) :') || '';
+            await api(`/api/admin/users/${id}/ban`, { method: 'PATCH', body: JSON.stringify({ is_banned: true, reason }) });
+        } else {
+            await api(`/api/admin/users/${id}/ban`, { method: 'PATCH', body: JSON.stringify({ is_banned: false }) });
+        }
+        loadUsers();
+    });
+
+    function debounce(fn, ms) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+    }
+
+    await Promise.all([loadSales(), loadProducts(), loadUsers()]);
+    document.getElementById('dashboard-loading').classList.add('hidden');
+    document.getElementById('dashboard-content').classList.remove('hidden');
+})();
+</script>
+{% endblock %}

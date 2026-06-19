@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loginItem = document.getElementById('dropdown-login');
         const registerItem = document.getElementById('dropdown-register');
         const profileItem = document.getElementById('dropdown-profile');
+        const dashboardItem = document.getElementById('dropdown-dashboard');
         const logoutItem = document.getElementById('dropdown-logout');
 
         if (token) {
@@ -24,6 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
             profileItem.classList.remove('hidden');
             logoutItem.classList.remove('hidden');
             logoutItem.addEventListener('click', logout);
+
+            // Lien dashboard visible uniquement pour les administrateurs
+            if (dashboardItem) {
+                let isAdmin = false;
+                try {
+                    isAdmin = !!JSON.parse(localStorage.getItem('user') || '{}').is_admin;
+                } catch (e) {}
+                dashboardItem.classList.toggle('hidden', !isAdmin);
+            }
         } else {
             loginItem.classList.remove('hidden');
             registerItem.classList.remove('hidden');

@@ -4,8 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Jeux m'occupe - Achetez et vendez des jeux de société{% endblock %}</title>
+
+    <!-- SEO -->
+    <meta name="description" content="{% block meta_description %}Jeux m'occupe : achetez et vendez des jeux de société d'occasion 100% complets et vérifiés, à petits prix. Livraison rapide et geste éco-responsable.{% endblock %}">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ request.base_url }}{% endblock %}">
+
+    <!-- Open Graph (partage réseaux sociaux) -->
+    <meta property="og:site_name" content="Jeux m'occupe">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='img/PNG/ICONS-10.png', _external=True) }}{% endblock %}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.og_title() }}">
+    <meta name="twitter:description" content="{{ self.og_description() }}">
+    <meta name="twitter:image" content="{{ self.og_image() }}">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/SVG/ICONS-03.svg') }}">
+
+    <!-- Données structurées : Organisation -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "OnlineStore",
+        "name": "Jeux m'occupe",
+        "url": "{{ request.url_root }}",
+        "logo": "{{ url_for('static', filename='img/PNG/ICONS-10.png', _external=True) }}",
+        "description": "Boutique de jeux de société d'occasion vérifiés et complets.",
+        "email": "contact@jeuxmoccupe.fr",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "12 Rue des Jeux",
+            "postalCode": "75001",
+            "addressLocality": "Paris",
+            "addressCountry": "FR"
+        }
+    }
+    </script>
+    {% block head_extra %}{% endblock %}
 </head>
 <body class="bg-white">
     <!-- Header -->
@@ -39,6 +81,7 @@
                         <a href="/login" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hidden" id="dropdown-login">Se connecter</a>
                         <a href="/register" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hidden" id="dropdown-register">S'inscrire</a>
                         <a href="/compte" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hidden" id="dropdown-profile">Mon profil</a>
+                        <a href="/dashboard" class="block px-4 py-2 text-sm font-semibold text-orange-600 hover:bg-gray-100 hidden" id="dropdown-dashboard">Dashboard admin</a>
                         <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hidden" id="dropdown-logout">Se déconnecter</button>
                     </div>
                 </div>
@@ -94,13 +137,13 @@
                 </div>
                 <p class="text-gray-400 text-sm leading-relaxed">La boutique de jeux de société d'occasion vérifiés et complets. Donnez une seconde vie à vos jeux !</p>
                 <div class="flex gap-4 mt-6">
-                    <a href="#" class="text-gray-400 hover:text-orange-500 transition">
+                    <a href="https://www.facebook.com/" target="_blank" rel="noopener nofollow" aria-label="Facebook" class="text-gray-400 hover:text-orange-500 transition">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20v-7.21H5.93v-2.93h2.36V7.98c0-2.33 1.43-3.61 3.48-3.61 1 0 1.84.07 2.09.11v2.42h-1.44c-1.13 0-1.35.53-1.35 1.32v1.73h2.69l-.35 2.93h-2.34V20H8.29z"/></svg>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-orange-500 transition">
+                    <a href="https://twitter.com/" target="_blank" rel="noopener nofollow" aria-label="Twitter / X" class="text-gray-400 hover:text-orange-500 transition">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 11-3.14 1.53 4.48 4.48 0 00.33-2.82A10.88 10.88 0 0123 3z"/></svg>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-orange-500 transition">
+                    <a href="https://www.instagram.com/" target="_blank" rel="noopener nofollow" aria-label="Instagram" class="text-gray-400 hover:text-orange-500 transition">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/></svg>
                     </a>
                 </div>
@@ -112,8 +155,8 @@
                 <ul class="space-y-2 text-sm text-gray-400">
                     <li><a href="/acheter" class="hover:text-orange-500 transition">Acheter un jeu</a></li>
                     <li><a href="/vendre" class="hover:text-orange-500 transition">Vendre mes jeux</a></li>
-                    <li><a href="/" class="hover:text-orange-500 transition">Nouveautés</a></li>
-                    <li><a href="#" class="hover:text-orange-500 transition">À propos</a></li>
+                    <li><a href="/acheter" class="hover:text-orange-500 transition">Nouveautés</a></li>
+                    <li><a href="/a-propos" class="hover:text-orange-500 transition">À propos</a></li>
                 </ul>
             </div>
 
@@ -121,10 +164,10 @@
             <div>
                 <h3 class="font-bold mb-4 text-white">Catégories</h3>
                 <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#" class="hover:text-orange-500 transition">Pour petits (3-6 ans)</a></li>
-                    <li><a href="#" class="hover:text-orange-500 transition">En famille</a></li>
-                    <li><a href="#" class="hover:text-orange-500 transition">Jeux Experts</a></li>
-                    <li><a href="#" class="hover:text-orange-500 transition">Jeux de stratégie</a></li>
+                    <li><a href="/acheter?category=Pour%20les%20petits" class="hover:text-orange-500 transition">Pour les petits (3-6 ans)</a></li>
+                    <li><a href="/acheter?category=En%20famille" class="hover:text-orange-500 transition">En famille</a></li>
+                    <li><a href="/acheter?category=Jeux%20Experts" class="hover:text-orange-500 transition">Jeux Experts</a></li>
+                    <li><a href="/acheter?category=Ambiance%20%26%20Soir%C3%A9e" class="hover:text-orange-500 transition">Ambiance &amp; Soirée</a></li>
                 </ul>
             </div>
 
@@ -153,9 +196,9 @@
             <div class="header-container py-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
                 <p>© 2026 Jeux m'occupe — Tous droits réservés</p>
                 <div class="flex gap-6">
-                    <a href="#" class="hover:text-orange-500 transition">Mentions légales</a>
-                    <a href="#" class="hover:text-orange-500 transition">CGV</a>
-                    <a href="#" class="hover:text-orange-500 transition">Confidentialité</a>
+                    <a href="/mentions-legales" class="hover:text-orange-500 transition">Mentions légales</a>
+                    <a href="/cgv" class="hover:text-orange-500 transition">CGV</a>
+                    <a href="/confidentialite" class="hover:text-orange-500 transition">Confidentialité</a>
                 </div>
             </div>
         </div>

@@ -119,6 +119,11 @@ with app.app_context():
     db.session.add_all(products)
     db.session.commit()
 
-    print("✅ Base de données initialisée avec succès!")
+    # Galerie d'images de démonstration (3 photos par produit)
+    for p in products:
+        p.image_list = [f'https://picsum.photos/seed/jeu{p.id}-{n}/600/450' for n in range(1, 4)]
+    db.session.commit()
+
+    print("Base de donnees initialisee avec succes!")
     print(f"   - {User.query.count()} utilisateurs créés")
     print(f"   - {Product.query.count()} produits créés")

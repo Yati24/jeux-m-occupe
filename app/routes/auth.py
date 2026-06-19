@@ -43,6 +43,9 @@ def login():
     if not user or not user.check_password(data['password']):
         return {'error': 'Invalid credentials'}, 401
 
+    if user.is_banned:
+        return {'error': 'Account banned', 'reason': user.ban_reason or 'Compte suspendu'}, 403
+
     access_token = create_access_token(identity=str(user.id))
     return {'access_token': access_token, 'user': user.to_dict(include_sensitive=True)}, 200
 

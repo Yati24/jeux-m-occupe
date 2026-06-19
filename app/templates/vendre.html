@@ -1,182 +1,305 @@
 {% extends "base.html" %}
 
-{% block title %}Vendre - Jeux m'occupe{% endblock %}
+{% block title %}Vendre mes jeux de société d'occasion | Jeux m'occupe{% endblock %}
+{% block meta_description %}Vendez vos jeux de société d'occasion sans commission. Publiez votre annonce en quelques minutes, mise en ligne sous 48h, paiement sécurisé.{% endblock %}
 
 {% block content %}
-<div class="header-container py-8">
-    <div class="container-sm">
-        <h1 class="section-heading mb-2">Ajouter une annonce</h1>
-        <p class="text-gray-600 mb-8">Remplissez les informations de votre jeu pour le mettre en vente</p>
-
-        <form id="sell-form" class="space-y-6">
-            <!-- Title -->
+<!-- Bande sombre -->
+<section class="bg-neutral-950 text-white">
+    <div class="header-container py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div class="flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl shrink-0">🎲</div>
             <div>
-                <label class="block text-sm font-semibold mb-2">Titre du jeu *</label>
-                <input type="text" name="title" class="input" placeholder="Ex: Catan - Edition Standard" required>
-                <p class="text-xs text-gray-500 mt-1">Soyez descriptif pour attirer plus d'acheteurs</p>
+                <p class="text-gray-400 text-sm">Donnez une seconde vie à vos jeux</p>
+                <h1 class="text-2xl md:text-3xl font-bold">Vendre mes jeux</h1>
+                <p class="text-gray-400 text-sm mt-1">Publiez une annonce en quelques minutes</p>
             </div>
-
-            <!-- Description -->
-            <div>
-                <label class="block text-sm font-semibold mb-2">Description</label>
-                <textarea name="description" class="input h-24" placeholder="Décrivez l'état, l'historique du jeu, s'il est complet, etc..." rows="4"></textarea>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+            <div class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-center">
+                <p class="text-lg font-bold">0%</p>
+                <p class="text-xs text-gray-400">commission</p>
             </div>
-
-            <!-- Grid: Category & Condition -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Catégorie *</label>
-                    <select name="category" class="input" required>
-                        <option value="">Sélectionner une catégorie</option>
-                        <option>Jeux de société</option>
-                        <option>Jeux de stratégie</option>
-                        <option>Jeux de party</option>
-                        <option>Jeux enfants</option>
-                        <option>Jeux de rôle</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold mb-2">État *</label>
-                    <select name="condition" class="input" required>
-                        <option value="">Sélectionner l'état</option>
-                        <option>Excellent</option>
-                        <option>Très bon</option>
-                        <option>Bon</option>
-                        <option>Acceptable</option>
-                    </select>
-                </div>
+            <div class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-center">
+                <p class="text-lg font-bold">48h</p>
+                <p class="text-xs text-gray-400">mise en ligne</p>
             </div>
-
-            <!-- Grid: Price & Year -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Prix (€) *</label>
-                    <input type="number" name="price" class="input" step="0.01" min="0" placeholder="0,00" required>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Année de publication</label>
-                    <input type="number" name="year" class="input" min="1900" max="2099" placeholder="2020">
-                </div>
+            <div class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-center">
+                <p class="text-lg font-bold">+2 400</p>
+                <p class="text-xs text-gray-400">acheteurs</p>
             </div>
+        </div>
+    </div>
+</section>
 
-            <!-- Grid: Players & Duration -->
-            <div class="grid grid-cols-2 gap-4">
+<!-- Contenu -->
+<div class="bg-gray-50 min-h-screen">
+    <div class="header-container py-10 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
+        <!-- Formulaire -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <h2 class="text-xl font-bold mb-1">Informations du jeu</h2>
+            <p class="text-gray-500 text-sm mb-6">Plus votre annonce est détaillée, plus elle attire d'acheteurs.</p>
+
+            <form id="sell-form" class="space-y-6">
+                <!-- Title -->
                 <div>
-                    <label class="block text-sm font-semibold mb-2">Nombre de joueurs</label>
-                    <input type="text" name="number_of_players" class="input" placeholder="2-4">
+                    <label class="block text-sm font-semibold mb-2">Titre du jeu *</label>
+                    <input type="text" name="title" class="input" placeholder="Ex: Catan - Edition Standard" required>
+                    <p class="text-xs text-gray-500 mt-1">Soyez descriptif pour attirer plus d'acheteurs</p>
                 </div>
 
+                <!-- Description -->
                 <div>
-                    <label class="block text-sm font-semibold mb-2">Durée du jeu</label>
-                    <input type="text" name="playing_time" class="input" placeholder="30 min">
+                    <label class="block text-sm font-semibold mb-2">Description</label>
+                    <textarea name="description" class="input h-24" placeholder="Décrivez l'état, l'historique du jeu, s'il est complet, etc..." rows="4"></textarea>
                 </div>
-            </div>
 
-            <!-- Image Upload -->
-            <div>
-                <label class="block text-sm font-semibold mb-4">Photo du jeu</label>
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition" id="image-drop">
-                    <input type="file" name="image" accept="image/*" class="hidden" id="image-input">
+                <!-- Category & Condition -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <p class="text-sm font-semibold text-gray-900 mb-1">Cliquez ou glissez une image</p>
-                        <p class="text-xs text-gray-600">PNG, JPG ou GIF (max 5MB)</p>
+                        <label class="block text-sm font-semibold mb-2">Catégorie *</label>
+                        <select name="category" class="input" required>
+                            <option value="">Sélectionner une catégorie</option>
+                            <option>Jeux de société</option>
+                            <option>Jeux de stratégie</option>
+                            <option>Jeux de party</option>
+                            <option>Jeux enfants</option>
+                            <option>Jeux de rôle</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">État *</label>
+                        <select name="condition" class="input" required>
+                            <option value="">Sélectionner l'état</option>
+                            <option>Comme neuf</option>
+                            <option>Très bon état</option>
+                            <option>Bon état</option>
+                            <option>Acceptable</option>
+                        </select>
                     </div>
                 </div>
-                <img id="preview" src="" alt="Aperçu" class="mt-4 max-w-xs hidden rounded-lg shadow-md">
+
+                <!-- Price & Year -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Prix (€) *</label>
+                        <input type="number" name="price" class="input" step="0.01" min="0" placeholder="0,00" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Année de publication</label>
+                        <input type="number" name="year" class="input" min="1900" max="2099" placeholder="2020">
+                    </div>
+                </div>
+
+                <!-- Players & Duration -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Nombre de joueurs</label>
+                        <input type="text" name="number_of_players" class="input" placeholder="2-4">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Durée du jeu</label>
+                        <input type="text" name="playing_time" class="input" placeholder="30 min">
+                    </div>
+                </div>
+
+                <!-- Image Upload (multi-photos) -->
+                <div>
+                    <label class="block text-sm font-semibold mb-3">Photos du jeu <span class="text-gray-400 font-normal">(jusqu'à 8)</span></label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition" id="image-drop">
+                        <input type="file" name="images" accept="image/*" multiple class="hidden" id="image-input">
+                        <div>
+                            <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="text-sm font-semibold text-gray-900 mb-1">Cliquez ou glissez vos images ici</p>
+                            <p class="text-xs text-gray-600">PNG, JPG, GIF ou WEBP — plusieurs photos possibles</p>
+                        </div>
+                    </div>
+                    <!-- Grille d'aperçus -->
+                    <div id="preview-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4"></div>
+                    <p id="preview-empty" class="text-xs text-gray-400 mt-3">La première photo sera utilisée comme image principale de l'annonce.</p>
+                </div>
+
+                <!-- Submit -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                    <button type="submit" class="btn-primary flex-1 py-3 text-lg">Publier l'annonce</button>
+                    <a href="/compte" class="btn-secondary flex-1 py-3 text-center text-lg">Annuler</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Colonne latérale : conseils -->
+        <aside class="space-y-4 lg:sticky lg:top-28">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="font-bold mb-4">Comment ça marche ?</h3>
+                <ol class="space-y-4">
+                    <li class="flex gap-3">
+                        <span class="w-7 h-7 rounded-full bg-orange-100 text-orange-600 font-bold text-sm flex items-center justify-center shrink-0">1</span>
+                        <p class="text-sm text-gray-600">Décrivez votre jeu et fixez votre prix.</p>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="w-7 h-7 rounded-full bg-orange-100 text-orange-600 font-bold text-sm flex items-center justify-center shrink-0">2</span>
+                        <p class="text-sm text-gray-600">Nos experts vérifient que le jeu est complet.</p>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="w-7 h-7 rounded-full bg-orange-100 text-orange-600 font-bold text-sm flex items-center justify-center shrink-0">3</span>
+                        <p class="text-sm text-gray-600">Votre annonce est en ligne sous 48h.</p>
+                    </li>
+                </ol>
             </div>
 
-            <!-- Submit Button -->
-            <div class="flex gap-4 pt-4">
-                <button type="submit" class="btn-primary flex-1 py-3 text-lg">Publier l'annonce</button>
-                <a href="/compte" class="btn-secondary flex-1 py-3 text-center text-lg">Annuler</a>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="font-bold mb-4">Nos engagements</h3>
+                <ul class="space-y-3 text-sm text-gray-600">
+                    <li class="flex items-center gap-3"><span class="text-green-600">✓</span> Aucune commission sur vos ventes</li>
+                    <li class="flex items-center gap-3"><span class="text-green-600">✓</span> Paiement sécurisé</li>
+                    <li class="flex items-center gap-3"><span class="text-green-600">✓</span> Expédition simplifiée</li>
+                    <li class="flex items-center gap-3"><span class="text-green-600">✓</span> Geste éco-responsable 🌿</li>
+                </ul>
             </div>
-        </form>
+
+            <div class="bg-orange-50 border border-orange-100 rounded-2xl p-6">
+                <p class="text-sm text-gray-700"><span class="font-bold">💡 Astuce :</span> une photo nette et lumineuse multiplie vos chances de vente.</p>
+            </div>
+        </aside>
     </div>
 </div>
 
 <script>
     const imageInput = document.getElementById('image-input');
     const imageDropZone = document.getElementById('image-drop');
-    const preview = document.getElementById('preview');
+    const previewGrid = document.getElementById('preview-grid');
+    const previewEmpty = document.getElementById('preview-empty');
+    const MAX_IMAGES = 8;
+    const ALLOWED = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+
+    // Liste des fichiers sélectionnés (cumulés au fil des dépôts)
+    let selectedFiles = [];
 
     imageDropZone.addEventListener('click', () => imageInput.click());
 
-    // Drag and drop
     imageDropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         imageDropZone.classList.add('border-orange-500', 'bg-orange-50');
     });
-
     imageDropZone.addEventListener('dragleave', () => {
         imageDropZone.classList.remove('border-orange-500', 'bg-orange-50');
     });
-
     imageDropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         imageDropZone.classList.remove('border-orange-500', 'bg-orange-50');
-        const files = e.dataTransfer.files;
-        if (files.length) {
-            imageInput.files = files;
-            handleImageSelect();
-        }
+        addFiles(e.dataTransfer.files);
+    });
+    imageInput.addEventListener('change', () => {
+        addFiles(imageInput.files);
+        imageInput.value = ''; // permet de re-sélectionner le même fichier
     });
 
-    imageInput.addEventListener('change', handleImageSelect);
-
-    function handleImageSelect() {
-        const file = imageInput.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                preview.src = e.target.result;
-                preview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
+    function addFiles(fileList) {
+        for (const file of fileList) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!file.type.startsWith('image/') || !ALLOWED.includes(ext)) {
+                showToast(`Format non supporté : ${file.name}`, 'error');
+                continue;
+            }
+            if (selectedFiles.length >= MAX_IMAGES) {
+                showToast(`Maximum ${MAX_IMAGES} photos`, 'error');
+                break;
+            }
+            selectedFiles.push(file);
         }
+        renderPreviews();
     }
+
+    function renderPreviews() {
+        previewGrid.innerHTML = '';
+        previewEmpty.classList.toggle('hidden', selectedFiles.length === 0);
+        selectedFiles.forEach((file, index) => {
+            const url = URL.createObjectURL(file);
+            const cell = document.createElement('div');
+            cell.className = 'relative group aspect-square rounded-xl overflow-hidden border border-gray-200';
+            cell.innerHTML = `
+                <img src="${url}" alt="Aperçu ${index + 1}" class="w-full h-full object-cover">
+                ${index === 0 ? '<span class="absolute top-1 left-1 bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">Principale</span>' : ''}
+                <button type="button" data-remove="${index}" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white text-sm flex items-center justify-center hover:bg-red-600 transition" aria-label="Supprimer">×</button>
+            `;
+            previewGrid.appendChild(cell);
+        });
+    }
+
+    previewGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-remove]');
+        if (!btn) return;
+        selectedFiles.splice(Number(btn.dataset.remove), 1);
+        renderPreviews();
+    });
 
     document.getElementById('sell-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const token = localStorage.getItem('access_token');
         if (!token) {
-            alert('Veuillez vous connecter');
-            window.location.href = '/login';
+            showToast('Veuillez vous connecter', 'error');
+            setTimeout(() => window.location.href = '/login', 800);
             return;
         }
 
-        const formData = new FormData(e.target);
-        const data = {
-            title: formData.get('title'),
-            description: formData.get('description'),
-            category: formData.get('category'),
-            condition: formData.get('condition'),
-            price: parseFloat(formData.get('price')),
-            year: formData.get('year') || null,
-            number_of_players: formData.get('number_of_players'),
-            playing_time: formData.get('playing_time'),
-        };
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        const originalLabel = submitBtn.textContent;
 
-        const response = await fetch('/api/selling/products', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(data)
-        });
+        try {
+            // 1) Upload des photos (si présentes)
+            let imageUrls = [];
+            if (selectedFiles.length) {
+                submitBtn.textContent = 'Envoi des photos…';
+                const fd = new FormData();
+                selectedFiles.forEach(f => fd.append('images', f));
+                const up = await fetch('/api/selling/upload', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: fd
+                });
+                if (!up.ok) {
+                    const err = await up.json();
+                    throw new Error(err.error || 'échec de l\'upload des photos');
+                }
+                imageUrls = (await up.json()).urls;
+            }
 
-        if (response.ok) {
-            alert('Annonce publiée ! Vous pouvez la voir sur votre profil.');
-            window.location.href = '/compte';
-        } else {
-            const error = await response.json();
-            alert('Erreur lors de la publication: ' + (error.message || 'Erreur inconnue'));
+            // 2) Création de l'annonce
+            submitBtn.textContent = 'Publication…';
+            const formData = new FormData(e.target);
+            const data = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                condition: formData.get('condition'),
+                price: parseFloat(formData.get('price')),
+                year: formData.get('year') || null,
+                number_of_players: formData.get('number_of_players'),
+                playing_time: formData.get('playing_time'),
+                images: imageUrls,
+            };
+
+            const response = await fetch('/api/selling/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || error.error || 'publication impossible');
+            }
+
+            showToast('Annonce publiée !', 'success');
+            setTimeout(() => window.location.href = '/compte', 800);
+        } catch (err) {
+            showToast('Erreur : ' + err.message, 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalLabel;
         }
     });
 </script>

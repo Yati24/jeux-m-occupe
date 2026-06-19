@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+import json
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -12,7 +13,8 @@ class Product(db.Model):
     condition = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False, index=True)
     stock = db.Column(db.Integer, default=1, nullable=False)  # Quantité disponible
-    image_url = db.Column(db.String(255))
+    image_url = db.Column(db.String(255))  # Photo principale (= 1ère de la galerie)
+    images = db.Column(db.Text)  # Galerie : liste d'URLs au format JSON
     seller_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     status = db.Column(db.String(50), default='available', index=True)
     number_of_players = db.Column(db.String(100))
@@ -26,6 +28,22 @@ class Product(db.Model):
     order_items = db.relationship('OrderItem', backref='product', lazy='dynamic')
     wishlists = db.relationship('Wishlist', backref='product', lazy='dynamic', cascade='all, delete-orphan')
 
+    @property
+    def image_list(self):
+        """Retourne la galerie sous forme de liste d'URLs."""
+        if self.images:
+            try:
+                return json.loads(self.images)
+            except (ValueError, TypeError):
+                pass
+        return [self.image_url] if self.image_url else []
+
+    @image_list.setter
+    def image_list(self, urls):
+        urls = [u for u in (urls or []) if u]
+        self.images = json.dumps(urls)
+        self.image_url = urls[0] if urls else None
+
     def to_dict(self, include_seller=True):
         data = {
             'id': self.id,
@@ -37,6 +55,7 @@ class Product(db.Model):
             'price': self.price,
             'stock': self.stock,
             'image_url': self.image_url,
+            'images': self.image_list,
             'status': self.status,
             'number_of_players': self.number_of_players,
             'playing_time': self.playing_time,

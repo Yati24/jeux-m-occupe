@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | Jeux m'occupe{% endblock %}
+{% block meta_description %}{{ page_title }} de Jeux m'occupe, la boutique de jeux de société d'occasion vérifiés et complets.{% endblock %}
+
+{% block content %}
+<section class="bg-neutral-950 text-white">
+    <div class="header-container py-10">
+        <h1 class="text-2xl md:text-3xl font-bold">{{ page_title }}</h1>
+        <p class="text-gray-400 text-sm mt-1">Jeux m'occupe — jeux de société d'occasion</p>
+    </div>
+</section>
+
+<div class="bg-gray-50 min-h-screen">
+    <div class="header-container py-10">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 max-w-3xl prose-sm">
+            <p class="text-gray-600 leading-relaxed">
+                Cette page « {{ page_title }} » est en cours de rédaction. Pour toute question,
+                contactez-nous à
+                <a href="mailto:contact@jeuxmoccupe.fr" class="text-orange-500 font-medium hover:underline">contact@jeuxmoccupe.fr</a>.
+            </p>
+            <p class="text-gray-600 leading-relaxed mt-4">
+                Jeux m'occupe est une marketplace de jeux de société d'occasion : chaque jeu est vérifié,
+                complet, et expédié sous 48h. Achetez à petit prix et offrez une seconde vie à vos jeux.
+            </p>
+            <a href="/acheter" class="btn-primary mt-6">Parcourir le catalogue</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
