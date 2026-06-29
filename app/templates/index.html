@@ -53,8 +53,6 @@
                 <p class="text-sm font-bold text-gray-900" id="hero-latest-title">—</p>
                 <div class="flex items-baseline gap-2 mt-1">
                     <span class="text-orange-500 font-bold" id="hero-latest-price">—</span>
-                    <span class="text-xs text-gray-400 line-through" id="hero-latest-old">—</span>
-                    <span class="text-[10px] font-bold text-green-600 bg-green-100 px-1.5 py-0.5 rounded" id="hero-latest-discount">—</span>
                 </div>
             </a>
         </div>
@@ -103,7 +101,7 @@
 
         <div class="grid-categories">
             <a href="/acheter?category=Pour%20les%20petits" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
-                <img src="https://picsum.photos/seed/cat-petits/400/600" alt="Jeux pour les petits" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
+                <img src="https://www.kinderpedia.co/images/jocurile_de_societate_1.webp" alt="Jeux pour les petits" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
                     <div>
                         <p class="text-2xl mb-1">👶</p>
@@ -113,7 +111,7 @@
             </a>
 
             <a href="/acheter?category=En%20famille" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
-                <img src="https://picsum.photos/seed/cat-famille/400/600" alt="Jeux en famille" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
+                <img src="https://oxfordlearning.com/wp-content/uploads/2025/03/GettyImages-93267999.jpg" alt="Jeux en famille" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
                     <div>
                         <p class="text-2xl mb-1">👨‍👩‍👧‍👦</p>
@@ -123,7 +121,7 @@
             </a>
 
             <a href="/acheter?category=Jeux%20Experts" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
-                <img src="https://picsum.photos/seed/cat-experts/400/600" alt="Jeux experts" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
+                <img src="https://www.banpu.com/wp-content/uploads/2019/12/BANPU-84.jpeg" alt="Jeux experts" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
                     <div>
                         <p class="text-2xl mb-1">🧠</p>
@@ -133,7 +131,7 @@
             </a>
 
             <a href="/acheter?category=Ambiance%20%26%20Soir%C3%A9e" class="group relative aspect-[2/3] rounded-2xl overflow-hidden bg-gray-300 hover:shadow-lg transition shadow-sm">
-                <img src="https://picsum.photos/seed/cat-ambiance/400/600" alt="Jeux d'ambiance et soirée" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
+                <img src="https://www.wargamer.com/wp-content/sites/wargamer/2026/06/board-games-amazon-prime-day-1-550x309.jpg" alt="Jeux d'ambiance et soirée" class="absolute inset-0 w-full h-full object-cover transition duration-300 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/70 flex items-end p-4 text-white">
                     <div>
                         <p class="text-2xl mb-1">🎉</p>
@@ -182,30 +180,23 @@
             const latest = data.products[0];
             if (latest) {
                 const price = Number(latest.price || 0);
-                const newPrice = price * 2.5;
-                const discount = newPrice > 0 ? Math.round(((newPrice - price) / newPrice) * 100) : 0;
                 const heroImg = document.getElementById('hero-image');
                 if (latest.image_url) heroImg.src = latest.image_url;
                 const card = document.getElementById('hero-latest');
                 card.href = `/produit/${latest.id}`;
                 document.getElementById('hero-latest-title').textContent = `${latest.title} · ${latest.condition || 'Bon état'}`;
                 document.getElementById('hero-latest-price').textContent = `${price.toFixed(0)} €`;
-                document.getElementById('hero-latest-old').textContent = `${newPrice.toFixed(0)} €`;
-                document.getElementById('hero-latest-discount').textContent = `-${discount}%`;
                 card.classList.remove('hidden');
             }
 
             const container = document.getElementById('featured-products');
             container.innerHTML = data.products.map(product => {
                 const price = Number(product.price || 0);
-                const newPrice = price * 2.5;
-                const discount = newPrice > 0 ? Math.round(((newPrice - price) / newPrice) * 100) : 0;
                 const condition = product.condition || 'Bon état';
 
                 return `
                 <a href="/produit/${product.id}" class="home-product-card group">
                     <div class="home-product-media">
-                        <span class="home-product-badge home-product-badge-discount">-${discount}%</span>
                         <span class="home-product-badge home-product-badge-condition">${condition}</span>
                         <img src="${product.image_url || '/static/placeholder.svg'}" alt="${product.title}" class="home-product-image" />
                     </div>
@@ -217,10 +208,7 @@
                             <span>${product.min_age ? `${product.min_age}+ ans` : 'Âge non précisé'}</span>
                         </div>
                         <div class="home-product-pricing">
-                            <div class="home-product-price-row">
-                                <span class="home-product-price">${price.toFixed(2)}€</span>
-                                <span class="home-product-old-price">${newPrice.toFixed(2)}€</span>
-                            </div>
+                            <span class="home-product-price">${price.toFixed(2)}€</span>
                             <span class="home-product-add">Ajouter</span>
                         </div>
                     </div>

@@ -83,8 +83,10 @@
         const condition = document.getElementById('condition-filter').value;
         const minPrice = document.getElementById('min-price').value;
         const maxPrice = document.getElementById('max-price').value;
+        const search = new URLSearchParams(window.location.search).get('search') || '';
 
         let url = `/api/products?page=${currentPage}&per_page=${perPage}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
         if (category) url += `&category=${encodeURIComponent(category)}`;
         if (condition) url += `&condition=${encodeURIComponent(condition)}`;
         if (minPrice) url += `&min_price=${minPrice}`;
@@ -104,14 +106,11 @@
         const container = document.getElementById('products-container');
         container.innerHTML = data.products.map(product => {
             const price = Number(product.price || 0);
-            const newPrice = price * 2.5;
-            const discount = newPrice > 0 ? Math.round(((newPrice - price) / newPrice) * 100) : 0;
             const condition = product.condition || 'Bon état';
 
             return `
                 <a href="/produit/${product.id}" class="home-product-card group">
                     <div class="home-product-media">
-                        <span class="home-product-badge home-product-badge-discount">-${discount}%</span>
                         <span class="home-product-badge home-product-badge-condition">${condition}</span>
                         <img src="${product.image_url || '/static/placeholder.svg'}" alt="${product.title}" class="home-product-image" />
                     </div>
@@ -123,10 +122,7 @@
                             <span>${product.min_age ? `${product.min_age}+ ans` : 'Âge non précisé'}</span>
                         </div>
                         <div class="home-product-pricing">
-                            <div class="home-product-price-row">
-                                <span class="home-product-price">${price.toFixed(2)}€</span>
-                                <span class="home-product-old-price">${newPrice.toFixed(2)}€</span>
-                            </div>
+                            <span class="home-product-price">${price.toFixed(2)}€</span>
                             <button onclick="addToCartFromList(${product.id}, event)" class="home-product-add">Ajouter</button>
                         </div>
                     </div>

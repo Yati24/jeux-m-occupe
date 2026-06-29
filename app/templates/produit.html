@@ -98,12 +98,8 @@
             </div>
 
             <!-- Price Section -->
-            <div class="card-lg bg-orange-50 border-orange-100 mb-6">
-                <div class="flex items-baseline gap-3 mb-2">
-                    <span id="product-price" class="text-3xl font-bold text-gray-900">{{ '%.2f'|format(product.price) }}€</span>
-                    <span id="product-original-price" class="text-lg text-gray-400 line-through"></span>
-                    <span id="product-discount" class="badge-orange">-60% économisé</span>
-                </div>
+            <div class="mb-6">
+                <span id="product-price" class="text-3xl font-bold text-gray-900">{{ '%.2f'|format(product.price) }}€</span>
             </div>
 
             <!-- Vendeur -->
@@ -133,16 +129,6 @@
                 </div>
             </a>
 
-            <!-- Expert Opinion -->
-            <div class="card mb-6 border-l-4 border-orange-500">
-                <div class="flex items-start gap-3">
-                    <div class="text-2xl">🎯</div>
-                    <div>
-                        <h3 class="font-bold text-sm mb-2">L'avis de l'expert</h3>
-                        <p id="product-expert-opinion" class="text-sm text-gray-700">Jeu idéal pour commencer dans l'univers des stratégies. Équilibré et accessible à tous.</p>
-                    </div>
-                </div>
-            </div>
 
             <!-- Product Details Icons -->
             <div class="grid grid-cols-3 gap-4 mb-6">
@@ -266,14 +252,6 @@
         document.getElementById('product-price').textContent = `${product.price.toFixed(2)}€`;
         document.getElementById('product-rating').textContent = `${product.rating || 5} ⭐ (${product.review_count || 0} avis vérifiés)`;
         document.getElementById('product-description').textContent = product.description;
-
-        // Original price calculation (assumed to be ~2.5x the current price)
-        const originalPrice = (product.price * 2.5).toFixed(2);
-        document.getElementById('product-original-price').textContent = `${originalPrice}€`;
-
-        // Discount calculation
-        const discount = Math.round(((originalPrice - product.price) / originalPrice) * 100);
-        document.getElementById('product-discount').textContent = `-${discount}% économisé`;
 
         // Load reviews
         const reviewsResponse = await fetch(`/api/products/${productId}/reviews`);

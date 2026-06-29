@@ -17,9 +17,18 @@ def list_products():
     per_page = request.args.get('per_page', 12, type=int)
 
     condition = request.args.get('condition')
+    search = request.args.get('search', '').strip()
 
     query = Product.query.filter_by(status='available')
 
+    if search:
+        query = query.filter(
+            db.or_(
+                Product.title.ilike(f'%{search}%'),
+                Product.publisher.ilike(f'%{search}%'),
+                Product.description.ilike(f'%{search}%'),
+            )
+        )
     if category:
         query = query.filter_by(category=category)
     if condition:
