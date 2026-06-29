@@ -50,19 +50,21 @@ def create_product():
     user_id = int(get_jwt_identity())
     data = request.get_json() or {}
 
-    required_fields = ['title', 'category', 'condition', 'price']
-    if not all(field in data for field in required_fields):
+    required_fields = ['title', 'publisher', 'category', 'condition', 'price']
+    if not all(field in data and data[field] for field in required_fields):
         return {'error': 'Missing required fields'}, 400
 
     product = Product(
         title=data['title'],
         description=data.get('description', ''),
+        publisher=data['publisher'],
         category=data['category'],
         condition=data['condition'],
         price=data['price'],
         seller_id=user_id,
         number_of_players=data.get('number_of_players'),
         playing_time=data.get('playing_time'),
+        min_age=data.get('min_age'),
         year=data.get('year')
     )
 
@@ -102,7 +104,7 @@ def update_product(product_id):
 
     data = request.get_json() or {}
 
-    updatable_fields = ['title', 'description', 'category', 'condition', 'price', 'image_url', 'number_of_players', 'playing_time', 'year', 'status']
+    updatable_fields = ['title', 'description', 'publisher', 'category', 'condition', 'price', 'image_url', 'number_of_players', 'playing_time', 'min_age', 'year', 'status']
 
     for field in updatable_fields:
         if field in data:

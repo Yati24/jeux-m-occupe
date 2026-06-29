@@ -2,6 +2,8 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.user import User
+from app.models.wishlist import Wishlist
+from app.models.product import Product
 
 bp = Blueprint('users', __name__, url_prefix='/api/users')
 
@@ -76,3 +78,29 @@ def get_user_reviews(user_id):
 
     reviews = user.reviews_received.all()
     return {'reviews': [r.to_dict() for r in reviews]}, 200
+
+@bp.route('/me/wishlist', methods=['GET'])
+@jwt_required()
+def get_wishlist():
+    user_id = int(get_jwt_identity())
+    items = Wishlist.query.filter_by(user_id=user_id).all()
+    return {'wishlist': [w.to_dict() for w in items]}, 200
+
+@bp.route('/me/wishlist/<int:product_id>', methods=['POST'])
+@jwt_required()
+def toggle_wishlist(product_id):
+    user_id = int(get_jwt_identity())
+    product = Product.query.get(product_id)
+    if not product:
+        return {'error': 'Product not found'}, 404
+
+    existing = Wishlist.query.filter_by(user_id=user_id, product_id=product_id).first()
+    if existing:
+        db.session.delete(existing)
+        db.session.commit()
+        return {'in_wishlist': False}, 200
+
+    item = Wishlist(user_id=user_id, product_id=product_id)
+    db.session.add(item)
+    db.session.commit()
+    return {'in_wishlist': True}, 201

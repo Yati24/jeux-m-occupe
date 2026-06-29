@@ -76,10 +76,16 @@
             <!-- Title & Rating -->
             <div class="mb-6">
                 <div class="flex items-start justify-between mb-3">
-                    <div>
+                    <div class="flex-1 min-w-0">
                         <p class="text-xs text-gray-500 uppercase tracking-wide" id="product-publisher">{{ product.publisher or 'Éditeur' }}</p>
                         <h1 id="product-title" class="text-3xl md:text-4xl font-bold">{{ product.title }}</h1>
                     </div>
+                    <button id="wishlist-btn" onclick="toggleWishlist()" title="Ajouter aux favoris"
+                        class="ml-4 mt-1 p-2 rounded-full border border-gray-200 hover:border-red-400 hover:bg-red-50 transition shrink-0">
+                        <svg id="wishlist-icon" class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- Rating -->
@@ -101,7 +107,7 @@
             </div>
 
             <!-- Vendeur -->
-            <div class="card mb-6">
+            <a href="/vendeur/{{ product.seller.id }}" class="card mb-6 block hover:border-orange-200 hover:shadow-md transition">
                 <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-3">Vendu par</p>
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 font-bold flex items-center justify-center shrink-0 overflow-hidden">
@@ -123,8 +129,9 @@
                             {% if product.seller.created_at %}<span class="text-gray-300">·</span><span>Membre depuis {{ product.seller.created_at.year }}</span>{% endif %}
                         </div>
                     </div>
+                    <span class="text-gray-400 text-sm shrink-0">Voir le profil →</span>
                 </div>
-            </div>
+            </a>
 
             <!-- Expert Opinion -->
             <div class="card mb-6 border-l-4 border-orange-500">
@@ -142,12 +149,16 @@
                 <div class="text-center">
                     <div class="text-2xl mb-2">👥</div>
                     <p class="text-xs text-gray-600">Joueurs</p>
-                    <p id="product-players" class="font-bold text-sm">{{ product.number_of_players or '-' }}</p>
+                    <p id="product-players" class="font-bold text-sm">
+                        {% if product.number_of_players %}{{ product.number_of_players }} max{% else %}-{% endif %}
+                    </p>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl mb-2">⏱️</div>
                     <p class="text-xs text-gray-600">Durée</p>
-                    <p id="product-time" class="font-bold text-sm">{{ product.playing_time or '-' }}</p>
+                    <p id="product-time" class="font-bold text-sm">
+                        {% if product.playing_time %}{{ product.playing_time }} min{% else %}-{% endif %}
+                    </p>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl mb-2">🎂</div>
@@ -156,10 +167,11 @@
                 </div>
             </div>
 
-            <!-- Category Tags -->
+            <!-- Category Tag -->
             <div class="flex flex-wrap gap-2 mb-6">
-                <span class="badge-orange">Stratégie</span>
-                <span class="badge bg-blue-100 text-blue-700">En famille</span>
+                {% if product.category %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">{{ product.category }}</span>
+                {% endif %}
             </div>
 
             <!-- Action Buttons -->
@@ -241,7 +253,13 @@
         document.getElementById('product-title').textContent = product.title;
         document.getElementById('breadcrumb-title').textContent = product.title;
         document.getElementById('product-image-main').src = product.image_url || '/static/placeholder.svg';
-        document.getElementById('product-publisher').textContent = product.publisher || 'Publisher';
+        const publisherEl = document.getElementById('product-publisher');
+        if (product.publisher) {
+            publisherEl.textContent = product.publisher;
+            publisherEl.classList.remove('hidden');
+        } else {
+            publisherEl.classList.add('hidden');
+        }
         document.getElementById('product-players').textContent = product.number_of_players || '-';
         document.getElementById('product-time').textContent = product.playing_time || '-';
         document.getElementById('product-age').textContent = product.min_age ? product.min_age + ' ans+' : '-';
@@ -321,7 +339,59 @@
         addToCartAPI(pId, 1, event);
     }
 
+    // --- Wishlist ---
+    let inWishlist = false;
+
+    function setWishlistState(active) {
+        inWishlist = active;
+        const icon = document.getElementById('wishlist-icon');
+        const btn = document.getElementById('wishlist-btn');
+        if (active) {
+            icon.setAttribute('fill', '#ef4444');
+            icon.setAttribute('stroke', '#ef4444');
+            btn.classList.add('border-red-400', 'bg-red-50');
+            btn.classList.remove('border-gray-200');
+        } else {
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+            btn.classList.remove('border-red-400', 'bg-red-50');
+            btn.classList.add('border-gray-200');
+        }
+    }
+
+    async function checkWishlist() {
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+        try {
+            const res = await fetch('/api/users/me/wishlist', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!res.ok) return;
+            const data = await res.json();
+            const found = data.wishlist.some(w => w.product_id == productId);
+            setWishlistState(found);
+        } catch {}
+    }
+
+    async function toggleWishlist() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            showToast('Connectez-vous pour ajouter aux favoris', 'error');
+            return;
+        }
+        try {
+            const res = await fetch(`/api/users/me/wishlist/${productId}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            setWishlistState(data.in_wishlist);
+            showToast(data.in_wishlist ? 'Ajouté aux favoris ❤️' : 'Retiré des favoris', data.in_wishlist ? 'success' : 'info');
+        } catch {
+            showToast('Erreur, réessayez', 'error');
+        }
+    }
+
     loadProduct();
+    checkWishlist();
 </script>
 {% endblock %}
 

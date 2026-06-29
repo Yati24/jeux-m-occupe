@@ -86,6 +86,15 @@ def create_app(config_name='development'):
             abort(404)
         return render_template('produit.html', product=product)
 
+    @app.route('/vendeur/<int:user_id>')
+    def vendeur(user_id):
+        from flask import render_template, abort
+        from app.models.user import User
+        user = User.query.get(user_id)
+        if not user:
+            abort(404)
+        return render_template('vendeur.html', seller=user)
+
     @app.route('/commande')
     def commande():
         from flask import render_template

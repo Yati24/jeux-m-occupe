@@ -48,6 +48,12 @@
                     <p class="text-xs text-gray-500 mt-1">Soyez descriptif pour attirer plus d'acheteurs</p>
                 </div>
 
+                <!-- Publisher -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Éditeur *</label>
+                    <input type="text" name="publisher" class="input" placeholder="Ex: Asmodee, Hasbro, Days of Wonder..." required>
+                </div>
+
                 <!-- Description -->
                 <div>
                     <label class="block text-sm font-semibold mb-2">Description</label>
@@ -60,11 +66,10 @@
                         <label class="block text-sm font-semibold mb-2">Catégorie *</label>
                         <select name="category" class="input" required>
                             <option value="">Sélectionner une catégorie</option>
-                            <option>Jeux de société</option>
-                            <option>Jeux de stratégie</option>
-                            <option>Jeux de party</option>
-                            <option>Jeux enfants</option>
-                            <option>Jeux de rôle</option>
+                            <option value="Pour les petits (3-6 ans)">Pour les petits (3-6 ans)</option>
+                            <option value="En famille">En famille</option>
+                            <option value="Jeux Experts">Jeux Experts</option>
+                            <option value="Ambiance &amp; Soirée">Ambiance &amp; Soirée</option>
                         </select>
                     </div>
                     <div>
@@ -91,15 +96,20 @@
                     </div>
                 </div>
 
-                <!-- Players & Duration -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Players, Duration & Min Age -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Nombre de joueurs</label>
-                        <input type="text" name="number_of_players" class="input" placeholder="2-4">
+                        <label class="block text-sm font-semibold mb-2">Nb. de joueurs</label>
+                        <input type="number" name="number_of_players" class="input" min="1" max="99" placeholder="4">
+                        <p class="text-xs text-gray-500 mt-1">Nombre maximum</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Durée du jeu</label>
-                        <input type="text" name="playing_time" class="input" placeholder="30 min">
+                        <label class="block text-sm font-semibold mb-2">Durée (minutes)</label>
+                        <input type="number" name="playing_time" class="input" min="1" max="9999" placeholder="30">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Âge minimum</label>
+                        <input type="number" name="min_age" class="input" min="1" max="99" placeholder="8">
                     </div>
                 </div>
 
@@ -245,6 +255,22 @@
             return;
         }
 
+        // Validation manuelle
+        const formData = new FormData(e.target);
+        const title = formData.get('title').trim();
+        const category = formData.get('category');
+        const condition = formData.get('condition');
+        const price = formData.get('price');
+
+        const publisher = formData.get('publisher').trim();
+        if (!title) { showToast('Le titre est obligatoire', 'error'); return; }
+        if (!publisher) { showToast('L\'éditeur est obligatoire', 'error'); return; }
+        if (!category) { showToast('Veuillez sélectionner une catégorie', 'error'); return; }
+        if (!condition) { showToast('Veuillez sélectionner l\'état du jeu', 'error'); return; }
+        if (!price || isNaN(parseFloat(price)) || parseFloat(price) < 0) {
+            showToast('Veuillez indiquer un prix valide', 'error'); return;
+        }
+
         const submitBtn = e.target.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         const originalLabel = submitBtn.textContent;
@@ -270,16 +296,20 @@
 
             // 2) Création de l'annonce
             submitBtn.textContent = 'Publication…';
-            const formData = new FormData(e.target);
+            const nbPlayers = formData.get('number_of_players');
+            const playingTime = formData.get('playing_time');
+            const minAge = formData.get('min_age');
             const data = {
-                title: formData.get('title'),
+                title,
                 description: formData.get('description'),
-                category: formData.get('category'),
-                condition: formData.get('condition'),
-                price: parseFloat(formData.get('price')),
-                year: formData.get('year') || null,
-                number_of_players: formData.get('number_of_players'),
-                playing_time: formData.get('playing_time'),
+                publisher: formData.get('publisher') || null,
+                category,
+                condition,
+                price: parseFloat(price),
+                year: formData.get('year') ? parseInt(formData.get('year')) : null,
+                number_of_players: nbPlayers ? parseInt(nbPlayers) : null,
+                playing_time: playingTime ? parseInt(playingTime) : null,
+                min_age: minAge ? parseInt(minAge) : null,
                 images: imageUrls,
             };
 

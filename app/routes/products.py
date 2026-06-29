@@ -16,10 +16,14 @@ def list_products():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 12, type=int)
 
+    condition = request.args.get('condition')
+
     query = Product.query.filter_by(status='available')
 
     if category:
         query = query.filter_by(category=category)
+    if condition:
+        query = query.filter_by(condition=condition)
     if min_price is not None:
         query = query.filter(Product.price >= min_price)
     if max_price is not None:

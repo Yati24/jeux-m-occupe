@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ seller.first_name or seller.username }}{% if seller.last_name and seller.first_name %} {{ seller.last_name }}{% endif %} — Vendeur de jeux d'occasion | Jeux m'occupe{% endblock %}
+{% block meta_description %}Découvrez les annonces de {{ seller.first_name or seller.username }} sur Jeux m'occupe : jeux de société d'occasion vérifiés, expédition rapide.{% endblock %}
+{% block canonical %}{{ url_for('vendeur', user_id=seller.id, _external=True) }}{% endblock %}
+
+{% block content %}
+<div class="header-container py-8">
+    <!-- Back -->
+    <button onclick="history.back()" class="flex items-center gap-2 text-gray-600 hover:text-orange-500 mb-6 text-sm">
+        <span>←</span><span>Retour</span>
+    </button>
+
+    <!-- Profil card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <!-- Avatar -->
+            <div class="w-20 h-20 rounded-full bg-orange-100 text-orange-600 text-3xl font-bold flex items-center justify-center shrink-0 overflow-hidden">
+                {% if seller.avatar %}
+                <img src="{{ seller.avatar }}" alt="{{ seller.username }}" class="w-full h-full object-cover">
+                {% else %}
+                {{ (seller.first_name or seller.username)[0] | upper }}
+                {% endif %}
+            </div>
+            <!-- Info -->
+            <div class="flex-1">
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {{ seller.first_name or '' }} {{ seller.last_name or '' }}
+                    {% if not seller.first_name and not seller.last_name %}{{ seller.username }}{% endif %}
+                </h1>
+                <p class="text-gray-500 text-sm mb-1">@{{ seller.username }}</p>
+                <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                    <span class="flex items-center gap-1"><span class="text-yellow-400">★</span> {{ '%.1f'|format(seller.seller_rating or 5.0) }}/5</span>
+                    {% if seller.city %}<span class="text-gray-300">·</span><span>{{ seller.city }}</span>{% endif %}
+                    {% if seller.created_at %}<span class="text-gray-300">·</span><span>Membre depuis {{ seller.created_at.year }}</span>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if seller.bio %}
+        <div class="mt-6 pt-6 border-t border-gray-100">
+            <p class="text-gray-700 text-sm leading-relaxed">{{ seller.bio }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Annonces -->
+    <h2 class="text-xl font-bold mb-4">Annonces de ce vendeur</h2>
+    <div id="seller-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <p class="text-gray-500 col-span-full">Chargement...</p>
+    </div>
+    <p id="no-products" class="hidden text-gray-500 mt-4">Ce vendeur n'a aucune annonce active pour l'instant.</p>
+</div>
+
+<script>
+(async () => {
+    const res = await fetch('/api/users/{{ seller.id }}/products?per_page=24');
+    const data = await res.json();
+    const container = document.getElementById('seller-products');
+    if (!data.products || data.products.length === 0) {
+        container.innerHTML = '';
+        document.getElementById('no-products').classList.remove('hidden');
+        return;
+    }
+    container.innerHTML = data.products.map(p => {
+        const price = Number(p.price || 0);
+        const condition = p.condition || 'Bon état';
+        return `
+            <a href="/produit/${p.id}" class="home-product-card group">
+                <div class="home-product-media">
+                    <span class="home-product-badge home-product-badge-condition">${condition}</span>
+                    <img src="${p.image_url || '/static/placeholder.svg'}" alt="${p.title}" class="home-product-image" />
+                </div>
+                <div class="home-product-content">
+                    <p class="home-product-publisher">${p.publisher || 'Éditeur'}</p>
+                    <h3 class="home-product-title">${p.title}</h3>
+                    <div class="home-product-pricing">
+                        <span class="home-product-price">${price.toFixed(2)}€</span>
+                    </div>
+                </div>
+            </a>
+        `;
+    }).join('');
+})();
+</script>
+{% endblock %}
