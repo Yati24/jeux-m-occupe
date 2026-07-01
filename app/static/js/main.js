@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loginItem = document.getElementById('dropdown-login');
         const registerItem = document.getElementById('dropdown-register');
         const profileItem = document.getElementById('dropdown-profile');
+        const messagesItem = document.getElementById('dropdown-messages');
         const dashboardItem = document.getElementById('dropdown-dashboard');
         const logoutItem = document.getElementById('dropdown-logout');
 
@@ -25,6 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
             profileItem.classList.remove('hidden');
             logoutItem.classList.remove('hidden');
             logoutItem.addEventListener('click', logout);
+
+            if (messagesItem) {
+                messagesItem.classList.remove('hidden');
+                messagesItem.classList.add('flex');
+            }
 
             // Lien dashboard visible uniquement pour les administrateurs
             if (dashboardItem) {
@@ -38,11 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
             loginItem.classList.remove('hidden');
             registerItem.classList.remove('hidden');
             profileItem.classList.add('hidden');
+            if (messagesItem) messagesItem.classList.add('hidden');
             logoutItem.classList.add('hidden');
         }
     }
-    
+
     updateCartCount();
+    if (token) updateMessagesBadge();
 });
 
 async function updateCartCount() {
@@ -130,6 +138,25 @@ async function addToCartAPI(productId, quantity, event) {
     } catch (e) {
         showToast('Erreur réseau', 'error');
     }
+}
+
+async function updateMessagesBadge() {
+    const token = localStorage.getItem('access_token');
+    const badge = document.getElementById('messages-badge');
+    if (!token || !badge) return;
+    try {
+        const res = await fetch('/api/messages/unread-count', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.count > 0) {
+            badge.textContent = data.count;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    } catch (e) {}
 }
 
 function logout() {

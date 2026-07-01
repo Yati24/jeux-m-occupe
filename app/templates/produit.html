@@ -129,6 +129,30 @@
                 </div>
             </a>
 
+            <!-- Bouton contacter le vendeur -->
+            <button onclick="openMessageModal()" class="btn-secondary w-full py-2.5 flex items-center justify-center gap-2 mb-6">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                Contacter le vendeur
+            </button>
+
+            <!-- Modal message -->
+            <div id="message-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg">Contacter le vendeur</h3>
+                        <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">&times;</button>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-4">Concernant : <span class="font-medium text-gray-800">{{ product.title }}</span></p>
+                    <form id="message-form">
+                        <textarea id="message-content" class="input h-28 w-full mb-4" placeholder="Votre message au vendeur…" required></textarea>
+                        <div class="flex gap-3">
+                            <button type="submit" class="btn-primary flex-1 py-2.5">Envoyer</button>
+                            <button type="button" onclick="closeMessageModal()" class="btn-secondary flex-1 py-2.5">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
 
             <!-- Product Details Icons -->
             <div class="grid grid-cols-3 gap-4 mb-6">
@@ -367,6 +391,48 @@
             showToast('Erreur, réessayez', 'error');
         }
     }
+
+    // --- Modal message ---
+    const SELLER_ID = {{ product.seller.id }};
+    const PRODUCT_ID = {{ product.id }};
+
+    function openMessageModal() {
+        const token = localStorage.getItem('access_token');
+        if (!token) { showToast('Connectez-vous pour envoyer un message', 'error'); return; }
+        document.getElementById('message-modal').classList.remove('hidden');
+        document.getElementById('message-content').focus();
+    }
+
+    function closeMessageModal() {
+        document.getElementById('message-modal').classList.add('hidden');
+        document.getElementById('message-content').value = '';
+    }
+
+    document.getElementById('message-modal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('message-modal')) closeMessageModal();
+    });
+
+    document.getElementById('message-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('access_token');
+        const content = document.getElementById('message-content').value.trim();
+        if (!content) return;
+
+        const res = await fetch('/api/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ recipient_id: SELLER_ID, product_id: PRODUCT_ID, content })
+        });
+
+        if (res.ok) {
+            closeMessageModal();
+            showToast('Message envoyé !', 'success');
+            setTimeout(() => window.location.href = `/messages?user=${SELLER_ID}&product=${PRODUCT_ID}`, 800);
+        } else {
+            const err = await res.json();
+            showToast(err.error || 'Erreur envoi', 'error');
+        }
+    });
 
     loadProduct();
     checkWishlist();

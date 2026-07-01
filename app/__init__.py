@@ -24,7 +24,7 @@ def create_app(config_name='development'):
         from app.models import user, product, cart, order, review, wishlist, message
         db.create_all()
 
-    from app.routes import auth, products, cart as cart_bp, orders, users, selling, admin
+    from app.routes import auth, products, cart as cart_bp, orders, users, selling, admin, messages as messages_bp
     app.register_blueprint(auth.bp)
     app.register_blueprint(products.bp)
     app.register_blueprint(cart_bp.bp)
@@ -32,6 +32,7 @@ def create_app(config_name='development'):
     app.register_blueprint(users.bp)
     app.register_blueprint(selling.bp)
     app.register_blueprint(admin.bp)
+    app.register_blueprint(messages_bp.bp)
 
     @app.route('/')
     def index():
@@ -104,6 +105,11 @@ def create_app(config_name='development'):
     def commande_detail(order_id):
         from flask import render_template
         return render_template('commande.html', order_id=order_id)
+
+    @app.route('/messages')
+    def messages_page():
+        from flask import render_template
+        return render_template('messages.html')
 
     @app.route('/dashboard')
     def dashboard():
